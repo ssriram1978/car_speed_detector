@@ -53,7 +53,8 @@ class SpeedDetector:
         ap.add_argument("-i", "--input", required=False, default = "",
         help="Path to the input video file")
         self.args = vars(ap.parse_args())
-        self.estimate_speed_from_video_file = True
+        if  len(self.args["input"]):
+            self.estimate_speed_from_video_file = True
 
     def load_model(self):
         """

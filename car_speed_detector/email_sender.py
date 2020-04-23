@@ -11,12 +11,13 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from email.mime.application import MIMEApplication
 import email.mime.image
+import os
 from car_speed_logging import logger
 
 class EmailSender:
     # TODO make this as a CLI configurable param. 
-    username = 'xyz@todo'
-    password = 'password'
+    username = 'speeddetector101@gmail.com'
+    password = 'LearnIOT06!'
     rcptlist = ['srinivassriram06@gmail.com', 'arjunsikka05@gmail.com', 'kr.reddy.kaushik@gmail.com', 'adityaanand.muz@gmail.com', 'ssriram.78@gmail.com', 'abhisar.muz@gmail.com', 'raja.muz@gmail.com']
     
     @classmethod
@@ -44,7 +45,10 @@ class EmailSender:
 
         client = smtplib.SMTP('smtp.gmail.com', 587)
         client.starttls()
+        #client = smtplib.SMTP_SSL('smtp.gmail.com', 465)
+        #client.ehlo()
         client.login(cls.username, cls.password)
         client.sendmail(cls.username, cls.rcptlist, msg.as_string())
         logger().debug("Email Sent")
         client.quit()
+        os.remove(temp_file.path)
