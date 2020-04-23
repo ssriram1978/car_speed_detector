@@ -1,7 +1,7 @@
 import os
 import time
 from datetime import datetime
-
+import argparse
 import dlib
 import imutils
 import numpy as np
@@ -32,6 +32,11 @@ class SpeedDetector:
         self.frame = None
         self.rgb = None
         self.meter_per_pixel = None
+        self.args = None
+        self.estimate_speed_from_video_file = False
+
+        #Parse input arguments
+        self.parse_input_arguments()
        
         # Load Model
         self.load_model()
@@ -42,6 +47,13 @@ class SpeedDetector:
         self.fps = FPS().start()
         self.centroid_object_creator = CentroidObjectCreator() 
 
+    def parse_input_arguments(self):
+        # construct the argument parser and parse the arguments
+        ap = argparse.ArgumentParser()
+        ap.add_argument("-i", "--input", required=False, default = "",
+        help="Path to the input video file")
+        self.args = vars(ap.parse_args())
+        self.estimate_speed_from_video_file = True
 
     def load_model(self):
         """
@@ -50,6 +62,8 @@ class SpeedDetector:
         logger().info("Loading model name:{}, proto_text:{}.".format(MODEL_NAME, PROTO_TEXT_FILE))
         self.net = cv2.dnn.readNetFromCaffe(PROTO_TEXT_FILE,
                                             MODEL_NAME)
+        if self.estimate_speed_from_video_file:
+            return
         # Set the target to the MOVIDIUS NCS stick connected via USB
         # Prerequisite: https://docs.openvinotoolkit.org/latest/_docs_install_guides_installing_openvino_raspbian.html
         logger().info("Setting MOVIDIUS NCS stick connected via USB as the target to run the model.")
@@ -59,8 +73,12 @@ class SpeedDetector:
         """
         Initialize the video stream and allow the camera sensor to warmup.
         """
-        logger().info("Warming up Raspberry PI camera connected via the PCB slot.")
-        self.video_stream = VideoStream(usePiCamera=True).start()
+        if self.estimate_speed_from_video_file:
+            logger().info("Reading the input video file.")
+            self.video_stream = cv2.VideoCapture(self.args["input"])
+        else:
+            logger().info("Warming up Raspberry PI camera connected via the PCB slot.")
+            self.video_stream = VideoStream(usePiCamera=True).start()
         time.sleep(2.0)
         # vs = VideoStream(src=0).start()
         
@@ -69,13 +87,20 @@ class SpeedDetector:
         1. Grab the next frame from the stream.
         2. store the current timestamp, and store the new date.
         """
-        self.frame = self.video_stream.read()
+        if self.estimate_speed_from_video_file:
+            ret, self.frame = self.video_stream.read()
+        else:
+            self.frame = self.video_stream.read()
         if self.frame is None:
             return
         
         self.current_time_stamp = datetime.now()
         # resize the frame
         self.frame = imutils.resize(self.frame, width=FRAME_WIDTH_IN_PIXELS)
+        #width = FRAME_WIDTH_IN_PIXELS
+        #height = self.frame.shape[0] # keep original height
+        #dim = (width, height)
+        #self.frame = cv2.resize(self.frame, dim, interpolation = cv2.INTER_AREA)
         self.rgb = cv2.cvtColor(self.frame, cv2.COLOR_BGR2RGB)
 
     def set_frame_dimensions(self):
@@ -126,7 +151,10 @@ class SpeedDetector:
 
         # clean up
         logger().info("cleaning up...")
-        self.video_stream.stop()
+        if self.estimate_speed_from_video_file:
+            self.video_stream.release()
+        else:
+            self.video_stream.stop()
 
     def perform_speed_detection(self):
         while True:

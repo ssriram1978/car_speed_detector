@@ -18,7 +18,7 @@ class SpeedValidator:
     @classmethod
     def initialize_log_file(cls):
         if not cls.log_file:
-            log_file = open(os.path.join(Path(__file__).parent, LOG_FILE_NAME),mode="a")
+            cls.log_file = open(os.path.join(Path(__file__).parent, LOG_FILE_NAME),mode="a")
         # set the file pointer to end of the file
         if cls.log_file.seek(0, os.SEEK_END) == 0:
             cls.log_file.write("Year,Month,Day,Time (in MPH),Speed\n")
@@ -48,7 +48,7 @@ class SpeedValidator:
 
                     # create a thread to upload the file to dropbox
                     # and start it
-                    t = Thread(target=EmailSender.send_email(), args=(tempFile,imageID))
+                    t = Thread(target=EmailSender.send_email, args=(tempFile,imageID,))
                     t.start()
 
                     # log the event in the log file
@@ -58,7 +58,7 @@ class SpeedValidator:
                     # log the event in the log file
                     info = "{},{},{},{},{}\n".format(year, month,
                                                      day, time, trackable_object.speedMPH)
-                cls.logFile.write(info)
+                cls.log_file.write(info)
 
                 # set the object has logged
                 trackable_object.logged = True

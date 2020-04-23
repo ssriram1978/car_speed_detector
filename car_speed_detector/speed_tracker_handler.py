@@ -41,7 +41,7 @@ class SpeedTrackerHandler:
     @classmethod
     def compute_speed(cls, frame, speed_tracked_object, objectID, centroid, ts, meter_per_pixel):
         #If a trackable object speed has not yet been estimated then estimate it
-        cls.estimate_object_speed(speed_tracked_object, centroid, ts)
+        cls.estimate_object_speed(speed_tracked_object, centroid, ts, meter_per_pixel)
         # store the trackable object in our dictionary
         cls.speed_tracking_dict[objectID] = speed_tracked_object
         cls.draw_id_centroid_on_output_frame(frame, centroid, objectID)
@@ -65,7 +65,7 @@ class SpeedTrackerHandler:
     def estimate_trackable_object(cls, trackable_object, centroid, ts):
         empty_slot = -1
         current_index = -1
-        for speed_zone, index in enumerate(cls.fetch_speed_zones(trackable_object, centroid)):
+        for index, speed_zone in enumerate(cls.fetch_speed_zones(trackable_object, centroid)):
             if speed_zone not in trackable_object.timestamp:
                 empty_slot = speed_zone
                 current_index = index

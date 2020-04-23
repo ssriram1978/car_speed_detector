@@ -10,6 +10,7 @@ from email.message import EmailMessage
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from email.mime.application import MIMEApplication
+import email.mime.image
 from car_speed_logging import logger
 
 class EmailSender:
@@ -19,29 +20,31 @@ class EmailSender:
     rcptlist = ['srinivassriram06@gmail.com', 'arjunsikka05@gmail.com', 'kr.reddy.kaushik@gmail.com', 'adityaanand.muz@gmail.com', 'ssriram.78@gmail.com', 'abhisar.muz@gmail.com', 'raja.muz@gmail.com']
     
     @classmethod
-    def send_email(cls, image, image_name):
+    def send_email(cls, temp_file, image_name):
         """
         
         """
         logger().debug("Sending Email")
-        receivers = ','.join(rcptlist)
+        receivers = ','.join(cls.rcptlist)
 
         msg = MIMEMultipart('mixed')
         msg['Subject'] = 'From GVW speed detector camera - Speeding car in GVW'
         msg['From'] = cls.username
-        msg['To'] = cls.receivers
+        msg['To'] = receivers
 
         alternative = MIMEMultipart('alternative')
         textplain = MIMEText('Captured a picture of a speeding car.')
         alternative.attach(textplain)
         msg.attach(alternative)
-        jpgpart = MIMEApplication(image)
-        jpgpart.add_header('Content-Disposition', 'attachment', filename=image_name)
-        msg.attach(jpgpart)
+        with open(temp_file.path, 'rb') as fp:
+            #jpgpart = MIMEApplication(fp.read())
+            jpgpart = email.mime.image.MIMEImage(fp.read())
+            jpgpart.add_header('Content-Disposition', 'attachment', filename=image_name)
+            msg.attach(jpgpart)
 
         client = smtplib.SMTP('smtp.gmail.com', 587)
         client.starttls()
-        client.login(cls.username, password)
-        client.sendmail(cls.username, rcptlist, msg.as_string())
+        client.login(cls.username, cls.password)
+        client.sendmail(cls.username, cls.rcptlist, msg.as_string())
         logger().debug("Email Sent")
         client.quit()
