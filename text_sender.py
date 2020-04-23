@@ -2,7 +2,7 @@ import datetime;import os;from twilio.rest import Client
 accountsid="INSERT_LIVE_ACCOUNT_SID_HERE"
 accounttoken="INSERT_LIVE_ACCOUNT_TOKEN_HERE"
 twilionumber="INSERT_YOUR_TWILIO_NUMBER_HERE"
-#USE THIS LINK TO FIND YOUR TWILIO ACCOUNT SID, ACCOUNT TOKEN, & PHONE NUMBER -> https://www.twilio.com/console
+#USE THIS LINK TO FIND YOUR TWILIO ACCOUNT SID, ACCOUNT TOKEN, & PHONE NUMBER -> (https://www.twilio.com/console)
 mynumber="INSERT_YOUR_PHONE_NUMBER_HERE"
 class ClassTextSend:
   def FuncTextSend(self):
