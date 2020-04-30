@@ -11,9 +11,10 @@ class SpeedTracker:
 
 		# initialize a dictionaries to store the timestamp and
 		# position of the object at various points
-		self.timestamp = {}
-		self.position = {}
-		self.lastPoint = False
+		self.timestamp_dict = {}
+		self.position_dict = {}
+		self.current_index = -1
+
 		
 		# initialize the object speeds in MPH and KMPH
 		self.speedMPH = None

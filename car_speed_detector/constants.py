@@ -27,10 +27,11 @@ MAX_NUM_OF_CONSECUTIVE_FRAMES_FOR_ACTION = 10
 # start to mark the object as "disappeared".
 MAX_DISTANCE_FROM_THE_OBJECT = 175
 
-# dictionary holding the different speed estimation columns
-SPEED_ESTIMATION_DICT = {"1st Zone": 120,
-                        "2nd Zone": 160,
-                        "3rd Zone": 200,
+# dictionary holding the different speed estimation column index.
+# For example, first zone is at column index 120 and so on...
+SPEED_ESTIMATION_DICT = {"1st Zone": 60,
+                        "2nd Zone": 120,
+                        "3rd Zone": 180,
                         "4th Zone": 240}
 
 LIST_OF_SPEED_ZONES = ["1st Zone", "2nd Zone", "3rd Zone", "4th Zone"]
