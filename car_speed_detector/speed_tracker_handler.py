@@ -1,5 +1,5 @@
 from speed_tracker import SpeedTracker
-from constants import SPEED_ESTIMATION_DICT, POINTS, MILES_PER_ONE_KILOMETER, LIST_OF_SPEED_ZONES
+from constants import SPEED_ESTIMATION_LIST, MILES_PER_ONE_KILOMETER
 import numpy as np
 from car_speed_logging import logger
 import cv2
@@ -56,36 +56,38 @@ class SpeedTrackerHandler:
         # if the direction is positive (indicating the object
         # is moving from left to right)
         if trackable_object.direction > 0:
-            list_of_speed_zones = LIST_OF_SPEED_ZONES
+            list_of_speed_zones = SPEED_ESTIMATION_LIST
         else:
-            list_of_speed_zones = LIST_OF_SPEED_ZONES[::-1]
+            list_of_speed_zones = SPEED_ESTIMATION_LIST[::-1]
         return list_of_speed_zones
     
     @classmethod
     def estimate_trackable_object(cls, trackable_object, centroid, ts):
         if trackable_object.current_index == -1:
+            #initialize it for the first time to 0.
             trackable_object.current_index = 0
-        elif trackable_object.current_index == len(LIST_OF_SPEED_ZONES)-1:
+        elif trackable_object.current_index == len(SPEED_ESTIMATION_LIST):
             logger().error("Unable to find an empty slot in the trackable_object timestamp.")
             return
-        else:
-            trackable_object.current_index += 1
         
-        if centroid[0] > SPEED_ESTIMATION_DICT[trackable_object.current_index]:
-            trackable_object.timestamp_dict[trackable_object.current_index] = ts
-            trackable_object.position_dict[trackable_object.current_index] = centroid[0]
+        if centroid[0] > SPEED_ESTIMATION_LIST[trackable_object.current_index]:
+            logger().debug("Recording timestamp and centroid at column {}".format(SPEED_ESTIMATION_LIST[trackable_object.current_index]))
+            trackable_object.timestamp_list.append(ts)
+            trackable_object.position_list.append(centroid[0])
+            trackable_object.current_index += 1
     
     @classmethod
     def calculate_distance_in_pixels(cls, start, end, trackable_object, meter_per_pixel, estimated_speeds):
         # calculate the distance in pixels
-        d = trackable_object.position_dict[end] - trackable_object.position_dict[start]
+        logger().debug("position_list={}".format(trackable_object.position_list))
+        d = trackable_object.position_list[end] - trackable_object.position_list[start]
         distance_in_pixels = abs(d)
         # check if the distance in pixels is zero, if so,
         # skip this iteration
         if distance_in_pixels == 0:
            return
         # calculate the time in hours
-        t = trackable_object.timestamp_dict[end] - trackable_object.timestamp_dict[start]
+        t = trackable_object.timestamp_list[end] - trackable_object.timestamp_list[start]
         time_in_seconds = abs(t.total_seconds())
         time_in_hours = time_in_seconds / (60 * 60)
         # calculate distance in kilometers and append the
@@ -102,14 +104,19 @@ class SpeedTrackerHandler:
             # the vehicle's speed has not yet been estimated, if yes,
             # then calculate the vehicle speed and log it if it's
             # over the limit
-            if trackable_object.current_index == len(LIST_OF_SPEED_ZONES)-1:
+            if trackable_object.current_index == len(SPEED_ESTIMATION_LIST):
                 # initialize the list of estimated speeds
                 estimated_speeds = []
                 # loop over all the pairs of points and estimate the
                 # vehicle speed
-                for (start, end) in POINTS:
+                for index in range(len(SPEED_ESTIMATION_LIST)-1):
+                    start = index
+                    end = index + 1
+                    logger().debug("start={},end={}".format(start, end))
                     cls.calculate_distance_in_pixels(start, end, trackable_object, meter_per_pixel, estimated_speeds)
                 # calculate the average speed
+                for index in range(len(SPEED_ESTIMATION_LIST)-1):
+                    logger().info("Between column indices {} to {}, measured speed = {}".format(SPEED_ESTIMATION_LIST[index], SPEED_ESTIMATION_LIST[index+1],estimated_speeds[index] * MILES_PER_ONE_KILOMETER))
                 trackable_object.calculate_speed(estimated_speeds)
                 # set the object as estimated
                 trackable_object.estimated = True

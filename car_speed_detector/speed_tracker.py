@@ -1,6 +1,6 @@
 # import the necessary packages
 import numpy as np
-
+from constants import MILES_PER_ONE_KILOMETER
 
 class SpeedTracker:
 	def __init__(self, objectID, centroid):
@@ -9,10 +9,10 @@ class SpeedTracker:
 		self.objectID = objectID
 		self.centroids = [centroid]
 
-		# initialize a dictionaries to store the timestamp and
+		# initialize a lists to store the timestamp and
 		# position of the object at various points
-		self.timestamp_dict = {}
-		self.position_dict = {}
+		self.timestamp_list = []
+		self.position_list = []
 		self.current_index = -1
 
 		
@@ -33,5 +33,4 @@ class SpeedTracker:
 	def calculate_speed(self, estimatedSpeeds):
 		# calculate the speed in KMPH and MPH
 		self.speedKMPH = np.average(estimatedSpeeds)
-		MILES_PER_ONE_KILOMETER = 0.621371
 		self.speedMPH = self.speedKMPH * MILES_PER_ONE_KILOMETER
