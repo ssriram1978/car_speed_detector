@@ -27,25 +27,15 @@ MAX_NUM_OF_CONSECUTIVE_FRAMES_FOR_ACTION = 10
 # start to mark the object as "disappeared".
 MAX_DISTANCE_FROM_THE_OBJECT = 175
 
-# dictionary holding the different speed estimation columns
-SPEED_ESTIMATION_DICT = {"1st Zone": 120,
-                        "2nd Zone": 160,
-                        "3rd Zone": 200,
-                        "4th Zone": 240}
-
-LIST_OF_SPEED_ZONES = ["1st Zone", "2nd Zone", "3rd Zone", "4th Zone"]
+# list holding the different speed estimation column index.
+# For example, first timestamp is stored at column index 60 and so on...
+SPEED_ESTIMATION_LIST = [30, 60, 90, 120, 150, 180, 210, 240]
 
 # number of frames to perform object tracking instead of object detection.
 MAX_NUM_OF_FRAMES_FOR_OBJECT_TRACKER = 4
 
 # minimum confidence
 MIN_CONFIDENCE = 0.4
-
-# initialize the list of various points used to calculate the avg of
-# the vehicle speed
-POINTS = [("1st Zone", "2nd Zone"),
-         ("2nd Zone", "3rd Zone"),
-         ("3rd Zone", "4th Zone")]
 
 MILES_PER_ONE_KILOMETER = 0.621371
 
@@ -59,3 +49,5 @@ CLASSES = ["background", "aeroplane", "bicycle", "bird", "boat",
 OPEN_DISPLAY = True
 
 SEND_EMAIL = True
+
+MILES_PER_ONE_KILOMETER = 0.621371
