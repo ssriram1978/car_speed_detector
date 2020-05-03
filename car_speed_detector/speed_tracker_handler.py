@@ -85,7 +85,8 @@ class SpeedTrackerHandler:
         # check if the distance in pixels is zero, if so,
         # skip this iteration
         if distance_in_pixels == 0:
-           return
+            estimated_speeds.append(0)
+            return
         # calculate the time in hours
         t = trackable_object.timestamp_list[end] - trackable_object.timestamp_list[start]
         time_in_seconds = abs(t.total_seconds())

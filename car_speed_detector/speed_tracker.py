@@ -32,5 +32,8 @@ class SpeedTracker:
 
 	def calculate_speed(self, estimatedSpeeds):
 		# calculate the speed in KMPH and MPH
-		self.speedKMPH = np.average(estimatedSpeeds)
-		self.speedMPH = self.speedKMPH * MILES_PER_ONE_KILOMETER
+                for index, value in enumerate(estimatedSpeeds[:]):
+                    if value == 0:
+                        estimatedSpeeds.delete(index)
+                self.speedKMPH = np.average(estimatedSpeeds)
+                self.speedMPH = self.speedKMPH * MILES_PER_ONE_KILOMETER

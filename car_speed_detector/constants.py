@@ -10,7 +10,7 @@ LOG_FILE_NAME = "speed_detector.csv"
 PROTO_TEXT_FILE = "MobileNetSSD_deploy.prototxt"
 
 # Max threshold for Speed in miles/hour
-MAX_THRESHOLD_SPEED = 15
+MAX_THRESHOLD_SPEED = 5
 
 # Distance of the camera from the road.
 DISTANCE_OF_CAMERA_FROM_ROAD = 16
@@ -29,7 +29,7 @@ MAX_DISTANCE_FROM_THE_OBJECT = 175
 
 # list holding the different speed estimation column index.
 # For example, first timestamp is stored at column index 60 and so on...
-SPEED_ESTIMATION_LIST = [30, 60, 90, 120, 150, 180, 210, 240]
+SPEED_ESTIMATION_LIST = [60, 120, 180, 240]
 
 # number of frames to perform object tracking instead of object detection.
 MAX_NUM_OF_FRAMES_FOR_OBJECT_TRACKER = 4
