@@ -11,3 +11,4 @@ def TextSender():
                           body=("Somebody is speeding at {} on {}, {} {}, {} ".format(now.strftime("%X"),
                             now.strftime("%A"),now.strftime("%B"),now.strftime("%d"),now.strftime("%Y"))))
     print("Text message successfully sent")
+ TextSender()
