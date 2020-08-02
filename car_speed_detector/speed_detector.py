@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 import os
 import time
 from datetime import datetime
@@ -61,8 +62,12 @@ class SpeedDetector:
         Load our serialized model from disk
         """
         logger().info("Loading model name:{}, proto_text:{}.".format(MODEL_NAME, PROTO_TEXT_FILE))
-        self.net = cv2.dnn.readNetFromCaffe(PROTO_TEXT_FILE,
-                                            MODEL_NAME)
+        self.net = cv2.dnn.readNetFromCaffe(os.path.join(
+                                            os.path.dirname(os.path.realpath(__file__)),
+                                            PROTO_TEXT_FILE),
+                                            os.path.join(
+                                            os.path.dirname(os.path.realpath(__file__)),
+                                            MODEL_NAME))
         if self.estimate_speed_from_video_file:
             return
         # Set the target to the MOVIDIUS NCS stick connected via USB
@@ -159,10 +164,17 @@ class SpeedDetector:
 
     def perform_speed_detection(self):
         while True:
-            self.loop_over_streams()
+            try:
+                self.loop_over_streams()
+            except ValueError:
+                self.clean_up()
+                time.sleep(10)
+            except:
+                os.system("sudo reboot")
         self.clean_up()
 
 
 if __name__ == "__main__":
+    #time.sleep(60)
     SpeedDetector().perform_speed_detection()
 

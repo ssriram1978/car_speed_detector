@@ -67,8 +67,9 @@ class SpeedTrackerHandler:
             #initialize it for the first time to 0.
             trackable_object.current_index = 0
         elif trackable_object.current_index == len(SPEED_ESTIMATION_LIST):
-            logger().error("Unable to find an empty slot in the trackable_object timestamp.")
-            return
+            error_str = "Unable to find an empty slot in the trackable_object timestamp."
+            logger().error(error_str)
+            raise ValueError
         
         if centroid[0] > SPEED_ESTIMATION_LIST[trackable_object.current_index]:
             logger().debug("Recording timestamp and centroid at column {}".format(SPEED_ESTIMATION_LIST[trackable_object.current_index]))
