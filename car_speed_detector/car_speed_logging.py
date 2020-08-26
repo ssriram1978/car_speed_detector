@@ -1,6 +1,6 @@
 import logging
 import sys
-from constants import PACKAGE_NAME
+from car_speed_detector.constants import PACKAGE_NAME
 
 
 class Logger:

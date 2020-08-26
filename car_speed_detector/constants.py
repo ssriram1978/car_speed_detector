@@ -12,6 +12,9 @@ PROTO_TEXT_FILE = "MobileNetSSD_deploy.prototxt"
 # Max threshold for Speed in miles/hour
 MAX_THRESHOLD_SPEED = 5
 
+USE_PI_CAMERA = True
+
+VIDEO_DEV_ID = 0
 # Distance of the camera from the road.
 DISTANCE_OF_CAMERA_FROM_ROAD = 16
 
@@ -42,12 +45,14 @@ MILES_PER_ONE_KILOMETER = 0.621371
 # initialize the list of class labels MobileNet SSD was trained to
 # detect
 CLASSES = ["background", "aeroplane", "bicycle", "bird", "boat",
-          "bottle", "bus", "car", "cat", "chair", "cow", "diningtable",
-          "dog", "horse", "motorbike", "person", "pottedplant", "sheep",
-          "sofa", "train", "tvmonitor"]
+           "bottle", "bus", "car", "cat", "chair", "cow", "diningtable",
+           "dog", "horse", "motorbike", "person", "pottedplant", "sheep",
+           "sofa", "train", "tvmonitor"]
 
 OPEN_DISPLAY = True
 
 SEND_EMAIL = True
+
+TIMEOUT_FOR_TRACKER = 10
 
 MILES_PER_ONE_KILOMETER = 0.621371

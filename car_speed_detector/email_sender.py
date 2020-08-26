@@ -12,7 +12,7 @@ from email.mime.text import MIMEText
 from email.mime.application import MIMEApplication
 import email.mime.image
 import os
-from car_speed_logging import logger
+from car_speed_detector.car_speed_logging import logger
 
 class EmailSender:
     # TODO make this as a CLI configurable param. 

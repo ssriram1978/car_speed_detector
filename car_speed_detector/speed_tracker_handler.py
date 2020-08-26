@@ -1,8 +1,9 @@
-from speed_tracker import SpeedTracker
-from constants import SPEED_ESTIMATION_LIST, MILES_PER_ONE_KILOMETER
+from car_speed_detector.speed_tracker import SpeedTracker
+from car_speed_detector.constants import SPEED_ESTIMATION_LIST, MILES_PER_ONE_KILOMETER, TIMEOUT_FOR_TRACKER
 import numpy as np
-from car_speed_logging import logger
+from car_speed_detector.car_speed_logging import logger
 import cv2
+from datetime import datetime
 
 
 class SpeedTrackerHandler:
@@ -10,8 +11,8 @@ class SpeedTrackerHandler:
     
     @classmethod
     def calculate_speed(cls, estimatedSpeeds):
-	    # calculate the speed in KMPH and MPH
-	    return np.average(estimatedSpeeds) * MILES_PER_ONE_KILOMETER
+        # calculate the speed in KMPH and MPH
+        return np.average(estimatedSpeeds) * MILES_PER_ONE_KILOMETER
  
     @classmethod
     def draw_id_centroid_on_output_frame(cls, frame, centroid, objectID):
@@ -34,8 +35,8 @@ class SpeedTrackerHandler:
             # if there is no existing trackable object, create one
             if not speed_tracker_object:
                 speed_tracker_object = SpeedTracker(objectID, centroid)
-                if len(cls.speed_tracking_dict) > 100:
-                    cls.speed_tracking_dict.clear()
+            else:
+                speed_tracker_object.centroids.append(centroid)
             yield speed_tracker_object, objectID, centroid
         
     @classmethod
@@ -76,7 +77,62 @@ class SpeedTrackerHandler:
             trackable_object.timestamp_list.append(ts)
             trackable_object.position_list.append(centroid[0])
             trackable_object.current_index += 1
-    
+
+    @classmethod
+    def clear_object_from_speed_tracking_dict(cls, object_id):
+        del (cls.speed_tracking_dict[object_id])
+
+    @classmethod
+    def handle_zero_time_stamp_list(cls, speed_tracker_object):
+        """
+        This method is invoked when there is no timestamp recorded for this tracker.
+        In this case, this method initially computes the current time and stores it in empty_recorded_timestamp.
+        Since the grace period (TIMEOUT_FOR_TRACKER) is already over, this method deletes the tracker object
+        from the speed_tracking_dict.
+        :param speed_tracker_object: Instance of type SpeedTracker.
+        :return:
+        """
+        if speed_tracker_object.empty_recorded_timestamp:
+            now = datetime.now()
+            duration = now - speed_tracker_object.empty_recorded_timestamp
+            if duration.total_seconds() > TIMEOUT_FOR_TRACKER:
+                logger().debug("Deleting objectId {} for empty timestamp "
+                                     "from the speed_tracking_dict.".format(
+                                     speed_tracker_object.objectID))
+                cls.clear_object_from_speed_tracking_dict(speed_tracker_object.objectID)
+        else:
+            speed_tracker_object.empty_recorded_timestamp = datetime.now()
+
+    @classmethod
+    def handle_the_case_where_grace_time_for_tracking_is_over(cls, now, speed_tracker_object):
+        """
+        This method handles the case where the grace time (TIMEOUT_FOR_TRACKER) for the tracker object is over.
+        :param now: timestamp
+        :param speed_tracker_object: Instance of type SpeedTracker.
+        :return:
+        """
+        if speed_tracker_object.estimated and speed_tracker_object.logged:
+            # Delete this object from speed tracking dict.
+            logger().info("Deleting objectId {} from the human_tracking_dict.".format(
+                speed_tracker_object.objectID))
+            cls.clear_object_from_speed_tracking_dict(speed_tracker_object.objectID)
+
+    @classmethod
+    def compute_speed_for_dangling_object_ids(cls):
+        """
+        This method computes speed for dangling objects found in speed_tracking_dict.
+        This can happen when the car was tracked only at a few sampling points (column traversal).
+        :return:
+        """
+        for object_id, car_tracker_object in cls.speed_tracking_dict.copy().items():
+            if len(car_tracker_object.timestamp_list) == 0:
+                cls.handle_zero_time_stamp_list(car_tracker_object)
+                return
+            now = datetime.now()
+            duration = now - car_tracker_object.timestamp_list[-1]
+            if duration.total_seconds() > TIMEOUT_FOR_TRACKER:
+                cls.handle_the_case_where_grace_time_for_tracking_is_over(now, car_tracker_object)
+
     @classmethod
     def calculate_distance_in_pixels(cls, start, end, trackable_object, meter_per_pixel, estimated_speeds):
         # calculate the distance in pixels

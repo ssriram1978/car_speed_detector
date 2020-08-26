@@ -1,6 +1,6 @@
 # import the necessary packages
 import numpy as np
-from constants import MILES_PER_ONE_KILOMETER
+from car_speed_detector.constants import MILES_PER_ONE_KILOMETER
 
 class SpeedTracker:
 	def __init__(self, objectID, centroid):
@@ -14,7 +14,7 @@ class SpeedTracker:
 		self.timestamp_list = []
 		self.position_list = []
 		self.current_index = -1
-
+		self.empty_recorded_timestamp = None
 		
 		# initialize the object speeds in MPH and KMPH
 		self.speedMPH = None

@@ -1,10 +1,10 @@
-from constants import SEND_EMAIL, MAX_THRESHOLD_SPEED, LOG_FILE_NAME
+from car_speed_detector.constants import SEND_EMAIL, MAX_THRESHOLD_SPEED, LOG_FILE_NAME
 import cv2
 import os
 from threading import Thread
 from pathlib import Path
 from imutils.io import TempFile
-from email_sender import EmailSender
+from car_speed_detector.email_sender import EmailSender
 from datetime import datetime
 
 
@@ -14,8 +14,8 @@ class SpeedValidator:
     @classmethod
     def close_log_file(cls):
         # check if the log file object exists, if it does, then close it
-        if not cls.log_file:
-            cls.logFile.close()
+        if cls.log_file:
+            cls.log_file.close()
 
     @classmethod
     def initialize_log_file(cls):
