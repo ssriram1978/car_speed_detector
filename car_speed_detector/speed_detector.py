@@ -1,20 +1,21 @@
 #!/usr/bin/env python3
 import argparse
-import cv2
-import imutils
 import os
 import time
+from datetime import datetime
+
+import cv2
+import imutils
 from car_speed_detector.car_speed_logging import logger
 from car_speed_detector.centroid_object_creator import CentroidObjectCreator
 # import the necessary packages
 from car_speed_detector.constants import PROTO_TEXT_FILE, MODEL_NAME, FRAME_WIDTH_IN_PIXELS, \
     DISTANCE_OF_CAMERA_FROM_ROAD, \
     OPEN_DISPLAY, USE_PI_CAMERA, VIDEO_DEV_ID
-from datetime import datetime
-from imutils.video import FPS
-from imutils.video import VideoStream
 from car_speed_detector.speed_tracker_handler import SpeedTrackerHandler
 from car_speed_detector.speed_validator import SpeedValidator
+from imutils.video import FPS
+from imutils.video import VideoStream
 
 
 class SpeedDetector:
@@ -87,6 +88,7 @@ class SpeedDetector:
             if not self.video_stream:
                 logger().error("cv2.VideoCapture() returned None.")
                 raise ValueError
+            # self.video_stream.set(cv2.CAP_PROP_FPS, int(10))
         elif USE_PI_CAMERA:
             logger().info("Warming up Raspberry PI camera connected via the PCB slot.")
             self.video_stream = VideoStream(usePiCamera=True).start()
@@ -180,12 +182,9 @@ class SpeedDetector:
         while True:
             try:
                 self.loop_over_streams()
-            except ValueError:
-                self.clean_up()
-                time.sleep(10)
             except:
+                logger().error("Caught an exception while looping over streams, rebooting....")
                 os.system("sudo reboot")
-        self.clean_up()
 
 
 if __name__ == "__main__":

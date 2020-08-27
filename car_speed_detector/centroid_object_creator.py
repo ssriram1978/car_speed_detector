@@ -1,8 +1,9 @@
 import cv2
-from constants import MIN_CONFIDENCE, CLASSES, MAX_NUM_OF_CONSECUTIVE_FRAMES_FOR_ACTION, MAX_DISTANCE_FROM_THE_OBJECT
-from logger import Logger
 import numpy as np
-from centroid_tracker import CentroidTracker
+from car_speed_detector.car_speed_logging import logger
+from car_speed_detector.centroid_tracker import CentroidTracker
+from car_speed_detector.constants import MIN_CONFIDENCE, CLASSES, MAX_NUM_OF_CONSECUTIVE_FRAMES_FOR_ACTION, \
+    MAX_DISTANCE_FROM_THE_OBJECT
 
 
 class CentroidObjectCreator:
@@ -55,7 +56,7 @@ class CentroidObjectCreator:
 
                 # if the class label is not a car, ignore it
                 if CLASSES[idx] != "car":
-                    Logger.logger().debug("class label {} is not a person.".format(CLASSES[idx]))
+                    logger().debug("class label {} is not a person.".format(CLASSES[idx]))
                     continue
                 self.total_frames += 1
                 # compute the (x, y)-coordinates of the bounding box

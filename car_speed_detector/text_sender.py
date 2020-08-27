@@ -1,4 +1,8 @@
-import datetime; import os; from twilio.rest import Client
+import datetime;
+import os;
+
+from twilio.rest import Client
+
 textinglist=["+1", "+1", ] #INSERT ANY PHONE NUMBERS HERE
 def TextSender():
   for i in (testinglist):

@@ -1,5 +1,6 @@
 import logging
 import sys
+
 from car_speed_detector.constants import PACKAGE_NAME
 
 

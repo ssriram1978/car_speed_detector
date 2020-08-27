@@ -1,4 +1,7 @@
-import datetime;import os;from twilio.rest import Client
+import datetime;
+
+from twilio.rest import Client
+
 accountsid="INSERT_ACCOUNT_SID_HERE"
 accounttoken="INSERT_ACCOUNT_TOKEN_HERE"
 twilionumber="INSERT_TWILIO_PHONE_NUMBERS_HERE"

@@ -1,9 +1,10 @@
-from car_speed_detector.speed_tracker import SpeedTracker
-from car_speed_detector.constants import SPEED_ESTIMATION_LIST, MILES_PER_ONE_KILOMETER, TIMEOUT_FOR_TRACKER
+from datetime import datetime
+
+import cv2
 import numpy as np
 from car_speed_detector.car_speed_logging import logger
-import cv2
-from datetime import datetime
+from car_speed_detector.constants import SPEED_ESTIMATION_LIST, MILES_PER_ONE_KILOMETER, TIMEOUT_FOR_TRACKER
+from car_speed_detector.speed_tracker import SpeedTracker
 
 
 class SpeedTrackerHandler:

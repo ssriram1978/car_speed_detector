@@ -1,6 +1,7 @@
 # This file is used to test the car speed detector functionality.
 
 import unittest
+
 from car_speed_detector.speed_detector import SpeedDetector
 
 

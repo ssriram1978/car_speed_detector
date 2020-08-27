@@ -1,18 +1,15 @@
 # Import smtplib for the actual sending function
-import smtplib
-
-# And imghdr to find the types of our images
-import imghdr
-
-# Here are the email package modules we'll need
-from email.message import EmailMessage
-
-from email.mime.multipart import MIMEMultipart
-from email.mime.text import MIMEText
-from email.mime.application import MIMEApplication
 import email.mime.image
 import os
+import smtplib
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
+
 from car_speed_detector.car_speed_logging import logger
+
+
+# And imghdr to find the types of our images
+# Here are the email package modules we'll need
 
 class EmailSender:
     # TODO make this as a CLI configurable param. 

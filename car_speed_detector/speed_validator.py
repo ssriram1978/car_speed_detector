@@ -1,11 +1,12 @@
-from car_speed_detector.constants import SEND_EMAIL, MAX_THRESHOLD_SPEED, LOG_FILE_NAME
-import cv2
 import os
-from threading import Thread
-from pathlib import Path
-from imutils.io import TempFile
-from car_speed_detector.email_sender import EmailSender
 from datetime import datetime
+from pathlib import Path
+from threading import Thread
+
+import cv2
+from car_speed_detector.constants import SEND_EMAIL, MAX_THRESHOLD_SPEED, LOG_FILE_NAME
+from car_speed_detector.email_sender import EmailSender
+from imutils.io import TempFile
 
 
 class SpeedValidator:
