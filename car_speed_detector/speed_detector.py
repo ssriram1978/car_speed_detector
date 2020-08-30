@@ -65,14 +65,15 @@ class SpeedDetector:
             os.path.join(
                 os.path.dirname(os.path.realpath(__file__)),
                 MODEL_NAME))
-        if self.estimate_speed_from_video_file_name:
-            logger().info("Setting target to CPU.")
-            self.net.setPreferableTarget(cv2.dnn.DNN_TARGET_CPU)
-        else:
+
+        if USE_PI_CAMERA:
             # Set the target to the MOVIDIUS NCS stick connected via USB
             # Prerequisite: https://docs.openvinotoolkit.org/latest/_docs_install_guides_installing_openvino_raspbian.html
             logger().info("Setting MOVIDIUS NCS stick connected via USB as the target to run the model.")
             self.net.setPreferableTarget(cv2.dnn.DNN_TARGET_MYRIAD)
+        else:
+            logger().info("Setting target to CPU.")
+            self.net.setPreferableTarget(cv2.dnn.DNN_TARGET_CPU)
 
     def initialize_camera(self):
         """

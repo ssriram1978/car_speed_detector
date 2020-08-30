@@ -56,7 +56,7 @@ class CentroidObjectCreator:
 
                 # if the class label is not a car, ignore it
                 if CLASSES[idx] != "car":
-                    logger().debug("class label {} is not a person.".format(CLASSES[idx]))
+                    logger().debug("class label {} is not a car.".format(CLASSES[idx]))
                     continue
                 self.total_frames += 1
                 # compute the (x, y)-coordinates of the bounding box

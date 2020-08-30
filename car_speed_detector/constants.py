@@ -12,7 +12,7 @@ PROTO_TEXT_FILE = "MobileNetSSD_deploy.prototxt"
 # Max threshold for Speed in miles/hour
 MAX_THRESHOLD_SPEED = 5
 
-USE_PI_CAMERA = True
+USE_PI_CAMERA = False
 
 VIDEO_DEV_ID = 0
 # Distance of the camera from the road.
@@ -37,7 +37,7 @@ SPEED_ESTIMATION_LIST = [60, 120, 180, 240]
 # number of frames to perform object tracking instead of object detection.
 MAX_NUM_OF_FRAMES_FOR_OBJECT_TRACKER = 4
 
-# minimum confidence
+# minimum confidence (set at 40% now)
 MIN_CONFIDENCE = 0.4
 
 MILES_PER_ONE_KILOMETER = 0.621371
