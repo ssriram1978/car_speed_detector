@@ -8,6 +8,8 @@ source `which virtualenvwrapper.sh`
 echo "accessing virtualenv..." >> /home/pi/test.log
 workon py3cv4
 cd /home/pi
+echo "export PYTHONPATH=$PYTHONPATH:/home/pi/git/car_speed_detector"
+export PYTHONPATH=$PYTHONPATH:/home/pi/git/car_speed_detector
 echo "running Python script..." >> /home/pi/test.log
 python3 /home/pi/git/car_speed_detector/car_speed_detector/speed_detector.py 
 echo "script exiting..." >> /home/pi/test.log
