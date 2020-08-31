@@ -47,7 +47,7 @@ class TestSpeedDetector(unittest.TestCase):
             use_pi_camera=False, open_display=False)
         self.assertEqual(speed_detector_inst.perform_speed_detection(), True)
         self.assertEqual(speed_detector_inst.get_direction(), repr(Direction.LEFT_TO_RIGHT))
-        self.assertLessEqual(speed_detector_inst.get_computed_speed(), 25)
+        self.assertLessEqual(speed_detector_inst.get_computed_speed(), 30)
         speed_detector_inst.clean_up()
         self.__cleanup()
 
@@ -77,7 +77,7 @@ class TestSpeedDetector(unittest.TestCase):
             use_pi_camera=False, open_display=False)
         self.assertEqual(speed_detector_inst.perform_speed_detection(), True)
         self.assertEqual(speed_detector_inst.get_direction(), repr(Direction.RIGHT_TO_LEFT))
-        self.assertLessEqual(speed_detector_inst.get_computed_speed(), 25)
+        self.assertLessEqual(speed_detector_inst.get_computed_speed(), 30)
         speed_detector_inst.clean_up()
         self.__cleanup()
 
@@ -92,7 +92,7 @@ class TestSpeedDetector(unittest.TestCase):
                                             use_pi_camera=False, open_display=False)
         self.assertEqual(speed_detector_inst.perform_speed_detection(), True)
         self.assertEqual(speed_detector_inst.get_direction(), repr(Direction.RIGHT_TO_LEFT))
-        self.assertLessEqual(speed_detector_inst.get_computed_speed(), 25)
+        self.assertLessEqual(speed_detector_inst.get_computed_speed(), 30)
         speed_detector_inst.clean_up()
         self.__cleanup()
 

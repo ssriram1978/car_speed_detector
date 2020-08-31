@@ -16,7 +16,7 @@ MAX_THRESHOLD_SPEED = 5
 
 VIDEO_DEV_ID = 0
 # Distance of the camera from the road.
-DISTANCE_OF_CAMERA_FROM_ROAD = 16
+DISTANCE_OF_CAMERA_FROM_ROAD = 20
 
 # Frame width.
 FRAME_WIDTH_IN_PIXELS = 400
