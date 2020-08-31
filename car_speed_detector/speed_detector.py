@@ -18,7 +18,7 @@ from imutils.video import VideoStream
 
 
 class SpeedDetector:
-    def __init__(self, estimate_speed_from_video_file_name=None, use_pi_camera=True):
+    def __init__(self, estimate_speed_from_video_file_name=None, use_pi_camera=True, open_display=True):
         # initialize the frame dimensions (we'll set them as soon as we read
         # the first frame from the video)
         self.height_of_frame = None
@@ -31,6 +31,8 @@ class SpeedDetector:
         self.meter_per_pixel = None
         self.args = None
         self.estimate_speed_from_video_file_name = estimate_speed_from_video_file_name
+        self.__perform_speed_detection = True
+        self.open_display = open_display
 
         # Parse input arguments
         self.parse_input_arguments()
@@ -132,11 +134,29 @@ class SpeedDetector:
             (self.height_of_frame, self.width_of_frame) = self.frame.shape[:2]
             self.meter_per_pixel = DISTANCE_OF_CAMERA_FROM_ROAD / self.width_of_frame
 
+    def get_direction(self):
+        """
+        Used in unit testing.
+        Returns the computed direction for the first found centroid tracker from the dictionary.
+        :return:
+        """
+        return SpeedTrackerHandler.get_direction_for_first_centroid_object()
+
+    def get_computed_speed(self):
+        """
+        Used in unit testing.
+        Returns the computed speed.
+        :return:
+        """
+        return SpeedTrackerHandler.get_computed_speed_for_the_first_centroid_object()
+
     def loop_over_streams(self):
-        while True:
+        while self.__perform_speed_detection:
             self.grab_next_frame()
             # check if the frame is None, if so, break out of the loop
             if self.frame is None:
+                if self.estimate_speed_from_video_file_name:
+                    self.__perform_speed_detection = False
                 break
             self.set_frame_dimensions()
             objects = self.centroid_object_creator.create_centroid_tracker_object(self.height_of_frame,
@@ -150,7 +170,7 @@ class SpeedDetector:
             SpeedTrackerHandler.compute_speed_for_dangling_object_ids()
             # if the *display* flag is set, then display the current frame
             # to the screen and record if a user presses a key
-            if OPEN_DISPLAY:
+            if self.open_display:
                 cv2.imshow("Car_car_speed_detector_frame", self.frame)
                 key = cv2.waitKey(1) & 0xFF
 
@@ -162,6 +182,7 @@ class SpeedDetector:
             self.fps.update()
 
     def clean_up(self):
+        self.__perform_speed_detection = False
         # stop the timer and display FPS information
         self.fps.stop()
         logger().info("elapsed time: {:.2f}".format(self.fps.elapsed()))
@@ -181,13 +202,20 @@ class SpeedDetector:
             self.video_stream.stop()
 
     def perform_speed_detection(self):
-        while True:
+        """
+        This method computes speed detection by looping over the video stream.
+        :return: True or False.
+        """
+        return_value = True
+        while self.__perform_speed_detection:
             try:
                 self.loop_over_streams()
             except Exception as e:
                 logger().error("Caught an exception while looping over streams {}, rebooting....".format(
                     type(e).__name__ + ': ' + str(e)))
+                return_value = False
                 os.system("sudo reboot")
+        return  return_value
 
 
 if __name__ == "__main__":

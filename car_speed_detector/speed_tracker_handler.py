@@ -5,7 +5,8 @@ from datetime import datetime
 import cv2
 import numpy as np
 from car_speed_detector.car_speed_logging import logger
-from car_speed_detector.constants import SPEED_ESTIMATION_LIST, MILES_PER_ONE_KILOMETER, TIMEOUT_FOR_TRACKER, Direction
+from car_speed_detector.constants import (SPEED_ESTIMATION_LIST, MILES_PER_ONE_KILOMETER, TIMEOUT_FOR_TRACKER,
+                                          Direction, MIN_COLUMN_MOVEMENT_TO_DETERMINE_DIRECTION)
 from car_speed_detector.speed_tracker import SpeedTracker
 
 
@@ -55,16 +56,30 @@ class SpeedTrackerHandler:
         # check if the direction of the object has been set, if
         # not, calculate it, and set it
         if trackable_object.direction is None:
-            if len(trackable_object.centroids) > 1:
-                if trackable_object.centroids[-1][0] >= trackable_object.centroids[-2][0]:
+            pass
+        if len(trackable_object.centroids) > 1:
+            tracker_column_movement = abs(trackable_object.centroids[-1][0] - trackable_object.centroids[-2][0])
+            if trackable_object.centroids[-1][0] >= trackable_object.centroids[-2][0]:
+                if trackable_object.direction != Direction.LEFT_TO_RIGHT and \
+                        tracker_column_movement > MIN_COLUMN_MOVEMENT_TO_DETERMINE_DIRECTION:
+
+                    logger().error("Correcting the Computed direction of trackable object id {} to be {}".format(
+                                   trackable_object.objectID, repr(Direction.LEFT_TO_RIGHT)))
                     trackable_object.direction = Direction.LEFT_TO_RIGHT
-                else:
-                    trackable_object.direction = Direction.RIGHT_TO_LEFT
             else:
-                if trackable_object.centroids[-1][0] <= SPEED_ESTIMATION_LIST[len(SPEED_ESTIMATION_LIST)//2]:
-                    trackable_object.direction = Direction.LEFT_TO_RIGHT
-                else:
+                if trackable_object.direction != Direction.RIGHT_TO_LEFT and \
+                        tracker_column_movement > MIN_COLUMN_MOVEMENT_TO_DETERMINE_DIRECTION:
+                    logger().error("Correcting the Computed direction of trackable object id {} to be {}".format(
+                                   trackable_object.objectID, repr(Direction.RIGHT_TO_LEFT)))
                     trackable_object.direction = Direction.RIGHT_TO_LEFT
+        else:
+            if trackable_object.centroids[-1][0] <= SPEED_ESTIMATION_LIST[len(SPEED_ESTIMATION_LIST) // 2]:
+                trackable_object.direction = Direction.LEFT_TO_RIGHT
+            else:
+                trackable_object.direction = Direction.RIGHT_TO_LEFT
+            logger().info("Computed direction of trackable object id {} to be {}".format(
+                trackable_object.objectID, repr(trackable_object.direction)))
+
         # if the direction is positive (indicating the object
         # is moving from left to right)
         if trackable_object.direction == Direction.LEFT_TO_RIGHT:
@@ -92,8 +107,8 @@ class SpeedTrackerHandler:
             return
         speed_zone_list = cls.__fetch_speed_zones(trackable_object, centroid)
         if centroid[0] > speed_zone_list[trackable_object.current_index]:
-            logger().debug("Recording timestamp and centroid at column {}".format(
-                SPEED_ESTIMATION_LIST[trackable_object.current_index]))
+            logger().info("Recording timestamp {} for trackable object id {} at column {}".format(
+                ts, trackable_object.objectID, speed_zone_list[trackable_object.current_index]))
             trackable_object.timestamp_list.append(ts)
             trackable_object.position_list.append(centroid[0])
             trackable_object.current_index += 1
@@ -175,6 +190,22 @@ class SpeedTrackerHandler:
         estimated_speeds.append(distance_in_km / time_in_hours)
 
     @classmethod
+    def get_direction_for_first_centroid_object(cls):
+        """
+        Used for unit testing purpose.
+        :return:
+        """
+        return repr(cls.speed_tracking_dict[0].direction)
+
+    @classmethod
+    def get_computed_speed_for_the_first_centroid_object(cls):
+        """
+        Fetches speed computed for the first centroid object.
+        :return:
+        """
+        return cls.speed_tracking_dict[0].speedMPH
+
+    @classmethod
     def estimate_object_speed(cls, trackable_object, centroid, ts, meter_per_pixel):
         """
         Estimate speed for the trackable object.
@@ -215,10 +246,11 @@ class SpeedTrackerHandler:
             logger().debug("start={},end={}".format(start, end))
             cls.__calculate_distance_in_pixels(start, end, trackable_object, meter_per_pixel, estimated_speeds)
         # calculate the average speed
+        speed_zone_list = cls.__fetch_speed_zones(trackable_object, centroid)
         for index in range(len(SPEED_ESTIMATION_LIST) - 1):
             logger().info(
-                "Between column indices {} to {}, measured speed = {}".format(SPEED_ESTIMATION_LIST[index],
-                                                                              SPEED_ESTIMATION_LIST[index + 1],
+                "Between column indices {} to {}, measured speed = {}".format(speed_zone_list[index],
+                                                                              speed_zone_list[index + 1],
                                                                               estimated_speeds[
                                                                                   index] * MILES_PER_ONE_KILOMETER))
         trackable_object.calculate_speed(estimated_speeds)
