@@ -5,7 +5,7 @@ from datetime import datetime
 import cv2
 import numpy as np
 from car_speed_detector.car_speed_logging import logger
-from car_speed_detector.constants import SPEED_ESTIMATION_LIST, MILES_PER_ONE_KILOMETER, TIMEOUT_FOR_TRACKER
+from car_speed_detector.constants import SPEED_ESTIMATION_LIST, MILES_PER_ONE_KILOMETER, TIMEOUT_FOR_TRACKER, Direction
 from car_speed_detector.speed_tracker import SpeedTracker
 
 
@@ -55,11 +55,19 @@ class SpeedTrackerHandler:
         # check if the direction of the object has been set, if
         # not, calculate it, and set it
         if trackable_object.direction is None:
-            y = [c[0] for c in trackable_object.centroids]
-            trackable_object.direction = centroid[0] - np.mean(y)
+            if len(trackable_object.centroids) > 1:
+                if trackable_object.centroids[-1][0] >= trackable_object.centroids[-2][0]:
+                    trackable_object.direction = Direction.LEFT_TO_RIGHT
+                else:
+                    trackable_object.direction = Direction.RIGHT_TO_LEFT
+            else:
+                if trackable_object.centroids[-1][0] <= SPEED_ESTIMATION_LIST[len(SPEED_ESTIMATION_LIST)//2]:
+                    trackable_object.direction = Direction.LEFT_TO_RIGHT
+                else:
+                    trackable_object.direction = Direction.RIGHT_TO_LEFT
         # if the direction is positive (indicating the object
         # is moving from left to right)
-        if trackable_object.direction > 0:
+        if trackable_object.direction == Direction.LEFT_TO_RIGHT:
             list_of_speed_zones = SPEED_ESTIMATION_LIST
         else:
             list_of_speed_zones = SPEED_ESTIMATION_LIST[::-1]
@@ -80,9 +88,10 @@ class SpeedTrackerHandler:
         elif trackable_object.current_index == len(SPEED_ESTIMATION_LIST):
             error_str = "Unable to find an empty slot in the trackable_object timestamp."
             logger().error(error_str)
-            raise ValueError
-
-        if centroid[0] > SPEED_ESTIMATION_LIST[trackable_object.current_index]:
+            # raise ValueError
+            return
+        speed_zone_list = cls.__fetch_speed_zones(trackable_object, centroid)
+        if centroid[0] > speed_zone_list[trackable_object.current_index]:
             logger().debug("Recording timestamp and centroid at column {}".format(
                 SPEED_ESTIMATION_LIST[trackable_object.current_index]))
             trackable_object.timestamp_list.append(ts)

@@ -1,3 +1,5 @@
+from enum import Enum
+
 PACKAGE_NAME = "speed_detector"
 
 # object detection model
@@ -11,8 +13,6 @@ PROTO_TEXT_FILE = "MobileNetSSD_deploy.prototxt"
 
 # Max threshold for Speed in miles/hour
 MAX_THRESHOLD_SPEED = 5
-
-USE_PI_CAMERA = False
 
 VIDEO_DEV_ID = 0
 # Distance of the camera from the road.
@@ -55,4 +55,7 @@ SEND_EMAIL = True
 
 TIMEOUT_FOR_TRACKER = 10
 
-MILES_PER_ONE_KILOMETER = 0.621371
+
+class Direction(Enum):
+    LEFT_TO_RIGHT = 1
+    RIGHT_TO_LEFT = 2

@@ -10,7 +10,8 @@ class TestSpeedDetector(unittest.TestCase):
     This class unit tests SpeedDetector class.
     """
     def test_speed_detector(self):
-        speed_detector_inst = SpeedDetector(estimate_speed_from_video_file_name='sample_data/cars.mp4')
+        speed_detector_inst = SpeedDetector(estimate_speed_from_video_file_name='sample_data/cars.mp4',
+                                            use_pi_camera=False)
         self.assertEqual(speed_detector_inst.perform_speed_detection(), True)
 
 

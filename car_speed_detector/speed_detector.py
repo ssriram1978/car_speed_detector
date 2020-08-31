@@ -10,8 +10,7 @@ from car_speed_detector.car_speed_logging import logger
 from car_speed_detector.centroid_object_creator import CentroidObjectCreator
 # import the necessary packages
 from car_speed_detector.constants import PROTO_TEXT_FILE, MODEL_NAME, FRAME_WIDTH_IN_PIXELS, \
-    DISTANCE_OF_CAMERA_FROM_ROAD, \
-    OPEN_DISPLAY, USE_PI_CAMERA, VIDEO_DEV_ID
+    DISTANCE_OF_CAMERA_FROM_ROAD, OPEN_DISPLAY, VIDEO_DEV_ID
 from car_speed_detector.speed_tracker_handler import SpeedTrackerHandler
 from car_speed_detector.speed_validator import SpeedValidator
 from imutils.video import FPS
@@ -19,11 +18,11 @@ from imutils.video import VideoStream
 
 
 class SpeedDetector:
-    def __init__(self, estimate_speed_from_video_file_name=None):
+    def __init__(self, estimate_speed_from_video_file_name=None, use_pi_camera=True):
         # initialize the frame dimensions (we'll set them as soon as we read
         # the first frame from the video)
-        self.H = None
-        self.W = None
+        self.height_of_frame = None
+        self.width_of_frame = None
         self.video_stream = None
         self.net = None
         self.current_time_stamp = None
@@ -37,9 +36,9 @@ class SpeedDetector:
         self.parse_input_arguments()
 
         # Load Model
-        self.load_model()
+        self.load_model(use_pi_camera)
         # Initialize the camera.
-        self.initialize_camera()
+        self.initialize_camera(use_pi_camera)
 
         # start the frames per second throughput estimator
         self.fps = FPS().start()
@@ -54,7 +53,7 @@ class SpeedDetector:
         if len(self.args["input"]):
             self.estimate_speed_from_video_file_name = self.args["input"]
 
-    def load_model(self):
+    def load_model(self, use_pi_camera):
         """
         Load our serialized model from disk
         """
@@ -66,7 +65,7 @@ class SpeedDetector:
                 os.path.dirname(os.path.realpath(__file__)),
                 MODEL_NAME))
 
-        if USE_PI_CAMERA:
+        if use_pi_camera:
             # Set the target to the MOVIDIUS NCS stick connected via USB
             # Prerequisite: https://docs.openvinotoolkit.org/latest/_docs_install_guides_installing_openvino_raspbian.html
             logger().info("Setting MOVIDIUS NCS stick connected via USB as the target to run the model.")
@@ -75,7 +74,7 @@ class SpeedDetector:
             logger().info("Setting target to CPU.")
             self.net.setPreferableTarget(cv2.dnn.DNN_TARGET_CPU)
 
-    def initialize_camera(self):
+    def initialize_camera(self, use_pi_camera):
         """
         Initialize the video stream and allow the camera sensor to warmup.
         """
@@ -90,7 +89,7 @@ class SpeedDetector:
                 logger().error("cv2.VideoCapture() returned None.")
                 raise ValueError
             # self.video_stream.set(cv2.CAP_PROP_FPS, int(10))
-        elif USE_PI_CAMERA:
+        elif use_pi_camera:
             logger().info("Warming up Raspberry PI camera connected via the PCB slot.")
             self.video_stream = VideoStream(usePiCamera=True).start()
         else:
@@ -129,9 +128,9 @@ class SpeedDetector:
         If the frame dimensions are empty, set them.
         """
         # if the frame dimensions are empty, set them
-        if not self.W or not self.H:
-            (self.H, self.W) = self.frame.shape[:2]
-            self.meter_per_pixel = DISTANCE_OF_CAMERA_FROM_ROAD / self.W
+        if not self.width_of_frame or not self.height_of_frame:
+            (self.height_of_frame, self.width_of_frame) = self.frame.shape[:2]
+            self.meter_per_pixel = DISTANCE_OF_CAMERA_FROM_ROAD / self.width_of_frame
 
     def loop_over_streams(self):
         while True:
@@ -140,7 +139,9 @@ class SpeedDetector:
             if self.frame is None:
                 break
             self.set_frame_dimensions()
-            objects = self.centroid_object_creator.create_centroid_tracker_object(self.H, self.W, self.rgb, self.net,
+            objects = self.centroid_object_creator.create_centroid_tracker_object(self.height_of_frame,
+                                                                                  self.width_of_frame, self.rgb,
+                                                                                  self.net,
                                                                                   self.frame)
             for speed_tracked_object, objectID, centroid in SpeedTrackerHandler.yield_a_speed_tracker_object(objects):
                 SpeedTrackerHandler.compute_speed(self.frame, speed_tracked_object, objectID, centroid,
@@ -183,8 +184,9 @@ class SpeedDetector:
         while True:
             try:
                 self.loop_over_streams()
-            except:
-                logger().error("Caught an exception while looping over streams, rebooting....")
+            except Exception as e:
+                logger().error("Caught an exception while looping over streams {}, rebooting....".format(
+                    type(e).__name__ + ': ' + str(e)))
                 os.system("sudo reboot")
 
 
