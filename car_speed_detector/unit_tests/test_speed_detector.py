@@ -31,8 +31,10 @@ class TestSpeedDetector(unittest.TestCase):
             estimate_speed_from_video_file_name='sample_data/left_to_right_car_movement1.mp4',
             use_pi_camera=False, open_display=False)
         self.assertEqual(speed_detector_inst.perform_speed_detection(), True)
+        speed_dict = speed_detector_inst.get_speed_dict()
         self.assertEqual(speed_detector_inst.get_direction(), repr(Direction.LEFT_TO_RIGHT))
-        self.assertLessEqual(speed_detector_inst.get_computed_speed(), 25)
+        self.assertLessEqual(speed_detector_inst.get_computed_speed(), 17)
+
         speed_detector_inst.clean_up()
         self.__cleanup()
 
@@ -47,7 +49,7 @@ class TestSpeedDetector(unittest.TestCase):
             use_pi_camera=False, open_display=False)
         self.assertEqual(speed_detector_inst.perform_speed_detection(), True)
         self.assertEqual(speed_detector_inst.get_direction(), repr(Direction.LEFT_TO_RIGHT))
-        self.assertLessEqual(speed_detector_inst.get_computed_speed(), 30)
+        self.assertLessEqual(speed_detector_inst.get_computed_speed(), 27)
         speed_detector_inst.clean_up()
         self.__cleanup()
 
@@ -77,7 +79,7 @@ class TestSpeedDetector(unittest.TestCase):
             use_pi_camera=False, open_display=False)
         self.assertEqual(speed_detector_inst.perform_speed_detection(), True)
         self.assertEqual(speed_detector_inst.get_direction(), repr(Direction.RIGHT_TO_LEFT))
-        self.assertLessEqual(speed_detector_inst.get_computed_speed(), 30)
+        self.assertLessEqual(speed_detector_inst.get_computed_speed(), 25)
         speed_detector_inst.clean_up()
         self.__cleanup()
 

@@ -21,6 +21,9 @@ DISTANCE_OF_CAMERA_FROM_ROAD = 20
 # Frame width.
 FRAME_WIDTH_IN_PIXELS = 400
 
+# Mid point in the frame.
+MID_POINT_IN_THE_FRAME = 200
+
 # Maximum consecutive frames a given object is allowed to be
 # marked as "disappeared" until we need to deregister the object from tracking.
 MAX_NUM_OF_CONSECUTIVE_FRAMES_FOR_ACTION = 10
@@ -29,10 +32,6 @@ MAX_NUM_OF_CONSECUTIVE_FRAMES_FOR_ACTION = 10
 # if the distance is larger than this maximum distance we'll
 # start to mark the object as "disappeared".
 MAX_DISTANCE_FROM_THE_OBJECT = 175
-
-# list holding the different speed estimation column index.
-# For example, first timestamp is stored at column index 60 and so on...
-SPEED_ESTIMATION_LIST = [60, 120, 180, 240]
 
 # number of frames to perform object tracking instead of object detection.
 MAX_NUM_OF_FRAMES_FOR_OBJECT_TRACKER = 4
@@ -53,7 +52,7 @@ OPEN_DISPLAY = True
 
 SEND_EMAIL = True
 
-TIMEOUT_FOR_TRACKER = 10
+TIMEOUT_FOR_TRACKER = 3
 
 
 class Direction(Enum):

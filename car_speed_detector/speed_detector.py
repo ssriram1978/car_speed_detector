@@ -3,16 +3,17 @@ import argparse
 import os
 import time
 from datetime import datetime
-
+import sys, traceback
 import cv2
 import imutils
 from car_speed_detector.car_speed_logging import logger
 from car_speed_detector.centroid_object_creator import CentroidObjectCreator
 # import the necessary packages
 from car_speed_detector.constants import PROTO_TEXT_FILE, MODEL_NAME, FRAME_WIDTH_IN_PIXELS, \
-    DISTANCE_OF_CAMERA_FROM_ROAD, OPEN_DISPLAY, VIDEO_DEV_ID
+    DISTANCE_OF_CAMERA_FROM_ROAD, TIMEOUT_FOR_TRACKER, VIDEO_DEV_ID
 from car_speed_detector.speed_tracker_handler import SpeedTrackerHandler
 from car_speed_detector.speed_validator import SpeedValidator
+from car_speed_detector.speed_tracker import SpeedTracker
 from imutils.video import FPS
 from imutils.video import VideoStream
 
@@ -114,8 +115,12 @@ class SpeedDetector:
         else:
             self.frame = self.video_stream.read()
         if self.frame is None:
+            if self.estimate_speed_from_video_file_name:
+                for _ in range(TIMEOUT_FOR_TRACKER + 1):
+                    SpeedTrackerHandler.compute_speed_for_dangling_object_ids(keep_dict_items=True)
+                    time.sleep(1)
+                self.__perform_speed_detection = False
             return
-
         self.current_time_stamp = datetime.now()
         # resize the frame
         self.frame = imutils.resize(self.frame, width=FRAME_WIDTH_IN_PIXELS)
@@ -142,6 +147,13 @@ class SpeedDetector:
         """
         return SpeedTrackerHandler.get_direction_for_first_centroid_object()
 
+    def get_speed_dict(self):
+        """
+        Get the speed dict.
+        :return:
+        """
+        return SpeedTrackerHandler.speed_tracking_dict
+
     def get_computed_speed(self):
         """
         Used in unit testing.
@@ -159,14 +171,16 @@ class SpeedDetector:
                     self.__perform_speed_detection = False
                 break
             self.set_frame_dimensions()
-            objects = self.centroid_object_creator.create_centroid_tracker_object(self.height_of_frame,
+            centroid_object_dict = self.centroid_object_creator.create_centroid_tracker_object(self.height_of_frame,
                                                                                   self.width_of_frame, self.rgb,
                                                                                   self.net,
                                                                                   self.frame)
-            for speed_tracked_object, objectID, centroid in SpeedTrackerHandler.yield_a_speed_tracker_object(objects):
-                SpeedTrackerHandler.compute_speed(self.frame, speed_tracked_object, objectID, centroid,
-                                                  self.current_time_stamp, self.meter_per_pixel)
-                SpeedValidator.validate_speed(speed_tracked_object, self.current_time_stamp, self.frame)
+            for speed_tracked_object in SpeedTrackerHandler.yield_a_speed_tracker_object(
+                    centroid_object_dict):
+                if not isinstance(speed_tracked_object, SpeedTracker):
+                    continue
+                SpeedTrackerHandler.estimate_object_speed(self.frame, speed_tracked_object, self.meter_per_pixel)
+
             SpeedTrackerHandler.compute_speed_for_dangling_object_ids()
             # if the *display* flag is set, then display the current frame
             # to the screen and record if a user presses a key
@@ -213,6 +227,10 @@ class SpeedDetector:
             except Exception as e:
                 logger().error("Caught an exception while looping over streams {}, rebooting....".format(
                     type(e).__name__ + ': ' + str(e)))
+                print("Exception in user code:")
+                print("-" * 60)
+                traceback.print_exc(file=sys.stdout)
+                print("-" * 60)
                 return_value = False
                 os.system("sudo reboot")
         return  return_value

@@ -11,21 +11,17 @@ class SpeedTracker:
     def __init__(self, object_id, centroid):
         # store the object ID, then initialize a list of centroids
         # using the current centroid
-        self.objectID = object_id
+        self.object_id = object_id
 
         # Store the first centroid object into the centroids list.
         # Subsequent centroids SHALL be appended to the centroids list.
         self.centroids = [centroid]
 
+        self.estimated_speed_list = []
+
         # initialize a lists to store the timestamp and
         # position of the object at various points
         self.timestamp_list = []
-
-        # Store the position list corresponding to each centroid found in centroids list.
-        self.position_list = []
-
-        # Used to find the current index from the position list.
-        self.current_index = -1
 
         # Used to record the timestamp for inactivity of the centroid object.
         self.empty_recorded_timestamp = None
@@ -44,11 +40,13 @@ class SpeedTracker:
         # initialize the direction of the object
         self.direction = None
 
+        # Tracked object frame.
+        self.tracked_object_frame_list = []
 
-    def calculate_speed(self, estimated_speeds):
+    def compute_average_speed(self):
+        """
+        This method calculates speed by averaging the list of estimated speeds.
+        """
         # calculate the speed in KMPH and MPH
-        for index, value in enumerate(estimated_speeds[:]):
-            if value == 0:
-                del estimated_speeds[index]
-        self.speedKMPH = np.average(estimated_speeds)
+        self.speedKMPH = np.average(self.estimated_speed_list)
         self.speedMPH = self.speedKMPH * MILES_PER_ONE_KILOMETER

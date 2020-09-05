@@ -27,16 +27,21 @@ class SpeedValidator:
             cls.log_file.write("Year,Month,Day,Time (in MPH),Speed\n")
 
     @classmethod
-    def validate_speed(cls, trackable_object, time_stamp, frame):
+    def validate_speed(cls, trackable_object):
         # Initialize log file.
         if not cls.log_file:
             cls.initialize_log_file()
-            
+        if not trackable_object:
+            return
         # check if the object has not been logged
         if not trackable_object.logged:
             # check if the object's speed has been estimated and it
             # is higher than the speed limit
             if trackable_object.estimated and trackable_object.speedMPH > MAX_THRESHOLD_SPEED:
+                mid_point = len(trackable_object.tracked_object_frame_list)//2
+                time_stamp = trackable_object.timestamp_list[mid_point]
+                frame = trackable_object.tracked_object_frame_list[mid_point]
+
                 # set the current year, month, day, and time
                 year = time_stamp.strftime("%Y")
                 month = time_stamp.strftime("%m")

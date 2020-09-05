@@ -12,7 +12,7 @@ class CentroidObjectCreator:
         # either (1) our object detector or (2) the correlation trackers
         self.rects = []
         self.rect = None
-        self.objects = None
+        self.centroid_tracker_dict = None
 
         self.frame = None
         # keep the count of total number of frames
@@ -91,6 +91,6 @@ class CentroidObjectCreator:
             self.loop_over_detections_fetch_tracker_update_trackers_list(detections)
         # use the centroid tracker to associate the (1) old object
         # centroids with (2) the newly computed object centroids
-        self.objects = self.ct.update(self.rects)
+        self.centroid_tracker_dict = self.ct.update(self.rects)
 
-        return self.objects
+        return self.centroid_tracker_dict
