@@ -7,6 +7,7 @@ import cv2
 from car_speed_detector.constants import SEND_EMAIL, MAX_THRESHOLD_SPEED, LOG_FILE_NAME
 from car_speed_detector.email_sender import EmailSender
 from imutils.io import TempFile
+from car_speed_detector.whats_app_message_sender import WhatsAppMessageSender
 
 
 class SpeedValidator:
@@ -68,7 +69,8 @@ class SpeedValidator:
                     # and start it
                     t = Thread(target=EmailSender.send_email, args=(tempFile,imageID,))
                     t.start()
-
+                    t2 = Thread(target=WhatsAppMessageSender().send_message(speed=trackable_object.speedMPH, temp_file=tempFile, image_name=imageID))
+                    t2.start()
                     # log the event in the log file
                     info = "{},{},{},{},{},{}\n".format(year, month,
                                                         day, time, trackable_object.speedMPH, imageID)

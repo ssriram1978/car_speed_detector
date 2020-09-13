@@ -12,7 +12,7 @@ LOG_FILE_NAME = "speed_detector.csv"
 PROTO_TEXT_FILE = "MobileNetSSD_deploy.prototxt"
 
 # Max threshold for Speed in miles/hour
-MAX_THRESHOLD_SPEED = 5
+MAX_THRESHOLD_SPEED = 1
 
 VIDEO_DEV_ID = 0
 # Distance of the camera from the road.
@@ -61,3 +61,9 @@ class Direction(Enum):
 
 
 MIN_COLUMN_MOVEMENT_TO_DETERMINE_DIRECTION = 1
+
+WHATSAPP_CHAT_GROUP_NAME = "ML for kids"
+
+BROWSER_LOCATION = "/usr/bin/google-chrome"
+
+BROWSER_EXECUTABLE_PATH = "/home/sriramsridhar/Downloads/chromedriver"
