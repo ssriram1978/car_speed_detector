@@ -1,6 +1,6 @@
 # This file defines the logic to send an alert with the speeding car image in whatsapp.
 
-from selenium import webdriver
+#from selenium import webdriver
 from datetime import datetime
 from car_speed_detector.constants import WHATSAPP_CHAT_GROUP_NAME, BROWSER_LOCATION, BROWSER_EXECUTABLE_PATH
 from car_speed_detector.car_speed_logging import logger
@@ -15,6 +15,7 @@ class WhatsAppMessageSender(metaclass=Singleton):
     """
 
     def __init__(self, browser_location=BROWSER_LOCATION, browser_executable_path=BROWSER_EXECUTABLE_PATH):
+        pass
         speeding_car_opts = webdriver.ChromeOptions()
         speeding_car_opts.binary_location = browser_location
         self.driver = webdriver.Chrome(executable_path=browser_executable_path, options=speeding_car_opts)
@@ -29,6 +30,7 @@ class WhatsAppMessageSender(metaclass=Singleton):
         :param image_name: Name of the image.
         :return:
         """
+        pass
         to = (WHATSAPP_CHAT_GROUP_NAME)
         now = datetime.now()
         message = (
