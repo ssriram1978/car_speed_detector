@@ -7,6 +7,10 @@ It aims to do the following:
 2. Perform image classification and speed computation of a moving object (car).
 3. Generate alarm (email) if the speed exceeds beyond the threshold limit.
 
+How to install the correct Intel Openvino toolkit compatible with this application?
+------------------------------
+Just run this script provided in this git repository. '/bin/bash /home/pi/git/car_speed_detector/install_openvino.sh' 
+
 How to run this application automatically on rebooting raspberry Pi?
 -----------------
 Enable '@/bin/bash /home/pi/git/car_speed_detector/on_reboot.sh' in LXDE autostart script as shown below.
