@@ -73,9 +73,9 @@ class SpeedValidator:
                     image_path = os.path.join(os.getcwd(), "{}.jpg".format(imageID))
                     logger().info("Writing car image {} to hard drive.".format(image_path))
                     cv2.imwrite(image_path, frame)
-                    t2 = Thread(target=WhatsAppMessageSender().send_message(speed=trackable_object.speedMPH,
-                                                                            image_path=image_path))
-                    t2.start()
+                    #t2 = Thread(target=WhatsAppMessageSender().send_message(speed=trackable_object.speedMPH,
+                     #                                                       image_path=image_path))
+                    #t2.start()
                     # log the event in the log file
                     info = "{},{},{},{},{},{}\n".format(year, month,
                                                         day, time, trackable_object.speedMPH, imageID)
