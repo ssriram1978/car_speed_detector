@@ -6,6 +6,7 @@ from datetime import datetime
 import sys, traceback
 import cv2
 import imutils
+from car_speed_detector.exception_handler import NoFrameFromVideoStreamException
 from car_speed_detector.car_speed_logging import logger
 from car_speed_detector.centroid_object_creator import CentroidObjectCreator
 # import the necessary packages
@@ -120,6 +121,9 @@ class SpeedDetector:
                     SpeedTrackerHandler.compute_speed_for_dangling_object_ids(keep_dict_items=True)
                     time.sleep(1)
                 self.__perform_speed_detection = False
+            else:
+                logger().error("No frames from video stream.")
+                raise NoFrameFromVideoStreamException("No frames from video stream.")
             return
         self.current_time_stamp = datetime.now()
         # resize the frame
@@ -185,7 +189,7 @@ class SpeedDetector:
             # if the *display* flag is set, then display the current frame
             # to the screen and record if a user presses a key
             if self.open_display:
-                cv2.imshow("Car_car_speed_detector_frame", self.frame)
+                cv2.imshow("Car_speed_detector_frame", self.frame)
                 key = cv2.waitKey(1) & 0xFF
 
                 # if the `q` key is pressed, break from the loop
