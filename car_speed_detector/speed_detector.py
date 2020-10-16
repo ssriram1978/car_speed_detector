@@ -45,7 +45,10 @@ class SpeedDetector:
         self.initialize_camera(use_pi_camera)
 
         # start the frames per second throughput estimator
-        self.fps = FPS().start()
+        self.frames_per_second = 0
+        self.fps_instance = FPS()
+        self.fps_instance.start()
+        self.fps_instance.stop()
         self.centroid_object_creator = CentroidObjectCreator()
 
     def parse_input_arguments(self):
@@ -125,6 +128,12 @@ class SpeedDetector:
                 logger().error("No frames from video stream.")
                 raise NoFrameFromVideoStreamException("No frames from video stream.")
             return
+        if self.fps_instance.elapsed() >= 1:
+            self.frames_per_second = self.fps_instance.fps()
+            self.fps_instance.start()
+        self.fps_instance.update()
+        self.fps_instance.stop()
+
         self.current_time_stamp = datetime.now()
         # resize the frame
         self.frame = imutils.resize(self.frame, width=FRAME_WIDTH_IN_PIXELS)
@@ -186,25 +195,23 @@ class SpeedDetector:
                 SpeedTrackerHandler.estimate_object_speed(self.frame, speed_tracked_object, self.meter_per_pixel)
 
             SpeedTrackerHandler.compute_speed_for_dangling_object_ids()
+
             # if the *display* flag is set, then display the current frame
             # to the screen and record if a user presses a key
             if self.open_display:
-                cv2.imshow("Car_speed_detector_frame", self.frame)
+                cv2.imshow("FPS={:.2f}".format(self.frames_per_second), self.frame)
                 key = cv2.waitKey(1) & 0xFF
 
                 # if the `q` key is pressed, break from the loop
                 if key == ord("q"):
                     break
 
-            # Update the FPS counter
-            self.fps.update()
-
     def clean_up(self):
         self.__perform_speed_detection = False
         # stop the timer and display FPS information
-        self.fps.stop()
-        logger().info("elapsed time: {:.2f}".format(self.fps.elapsed()))
-        logger().info("approx. FPS: {:.2f}".format(self.fps.fps()))
+        self.fps_instance.stop()
+        logger().info("elapsed time: {:.2f}".format(self.fps_instance.elapsed()))
+        logger().info("approx. FPS: {:.2f}".format(self.fps_instance.fps()))
 
         # Close the log file.
         SpeedValidator.close_log_file()
