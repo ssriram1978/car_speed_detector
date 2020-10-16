@@ -17,6 +17,7 @@ from car_speed_detector.speed_validator import SpeedValidator
 from car_speed_detector.speed_tracker import SpeedTracker
 from car_speed_detector.frames_per_second import FPS
 from imutils.video import VideoStream
+import socket
 
 
 class SpeedDetector:
@@ -31,6 +32,7 @@ class SpeedDetector:
         self.frame = None
         self.rgb = None
         self.meter_per_pixel = None
+        self.host_name = socket.gethostname()
         self.args = None
         self.estimate_speed_from_video_file_name = estimate_speed_from_video_file_name
         self.__perform_speed_detection = True
@@ -196,7 +198,7 @@ class SpeedDetector:
             # to the screen and record if a user presses a key
             if self.open_display:
                 self.__write_frames_per_second_on_the_frame()
-                cv2.imshow("Car Speed Detector", self.frame)
+                cv2.imshow("{}".format(self.host_name), self.frame)
                 key = cv2.waitKey(1) & 0xFF
 
                 # if the `q` key is pressed, break from the loop
