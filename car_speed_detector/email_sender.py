@@ -4,7 +4,7 @@ import os
 import smtplib
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
-
+import socket
 from car_speed_detector.car_speed_logging import logger
 
 
@@ -16,7 +16,8 @@ class EmailSender:
     username = 'speeddetector101@gmail.com'
     password = 'LearnIOT06!'
     rcptlist = ['srinivassriram06@gmail.com', 'arjunsikka05@gmail.com', 'kr.reddy.kaushik@gmail.com', 'adityaanand.muz@gmail.com', 'ssriram.78@gmail.com', 'abhisar.muz@gmail.com', 'raja.muz@gmail.com']
-    
+    host_name = socket.gethostname()
+
     @classmethod
     def send_email(cls, temp_file, image_name):
         """
@@ -26,7 +27,7 @@ class EmailSender:
         receivers = ','.join(cls.rcptlist)
 
         msg = MIMEMultipart('mixed')
-        msg['Subject'] = 'From GVW speed detector camera - Speeding car in GVW'
+        msg['Subject'] = 'From GVW speed detector camera {} - Speeding car in GVW'.format(EmailSender.host_name)
         msg['From'] = cls.username
         msg['To'] = receivers
 
