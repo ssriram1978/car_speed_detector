@@ -264,3 +264,4 @@ class SpeedDetector:
 if __name__ == "__main__":
     # time.sleep(60)
     SpeedDetector().perform_speed_detection()
+    os.system("sudo reboot")

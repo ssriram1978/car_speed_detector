@@ -13,3 +13,4 @@ export PYTHONPATH=$PYTHONPATH:/home/pi/git/car_speed_detector
 echo "running Python script..." >> /home/pi/car_speed_detector.log
 python3 /home/pi/git/car_speed_detector/car_speed_detector/speed_detector.py >> /home/pi/car_speed_detector.log
 echo "script exiting..." >> /home/pi/car_speed_detector.log
+echo "rebooting..." >> sudo reboot
