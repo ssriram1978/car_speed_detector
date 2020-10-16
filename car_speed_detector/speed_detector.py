@@ -194,10 +194,10 @@ class SpeedDetector:
 
             SpeedTrackerHandler.compute_speed_for_dangling_object_ids()
 
+            self.__write_frames_per_second_on_the_frame()
             # if the *display* flag is set, then display the current frame
             # to the screen and record if a user presses a key
             if self.open_display:
-                self.__write_frames_per_second_on_the_frame()
                 cv2.imshow("{}".format(self.host_name), self.frame)
                 key = cv2.waitKey(1) & 0xFF
 
@@ -215,7 +215,7 @@ class SpeedDetector:
         # Blue color in BGR
         color = (255, 0, 0)
         # Line thickness of 2 px
-        thickness = 2
+        thickness = 1
         # Using cv2.putText() method
         self.frame = cv2.putText(self.frame, 'FPS={:.2f}'.format(self.fps_instance.fps), org, font,
                                  +                   fontScale, color, thickness, cv2.LINE_AA)
