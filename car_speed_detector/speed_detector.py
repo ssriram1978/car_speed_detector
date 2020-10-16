@@ -20,7 +20,7 @@ from imutils.video import VideoStream
 
 
 class SpeedDetector:
-    def __init__(self, estimate_speed_from_video_file_name=None, use_pi_camera=True, open_display=True):
+    def __init__(self, estimate_speed_from_video_file_name=None, use_pi_camera=True, open_display=False):
         # initialize the frame dimensions (we'll set them as soon as we read
         # the first frame from the video)
         self.height_of_frame = None
