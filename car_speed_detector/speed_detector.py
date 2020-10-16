@@ -15,7 +15,7 @@ from car_speed_detector.constants import PROTO_TEXT_FILE, MODEL_NAME, FRAME_WIDT
 from car_speed_detector.speed_tracker_handler import SpeedTrackerHandler
 from car_speed_detector.speed_validator import SpeedValidator
 from car_speed_detector.speed_tracker import SpeedTracker
-from imutils.video import FPS
+from car_speed_detector.frames_per_second import FPS
 from imutils.video import VideoStream
 
 
@@ -45,7 +45,10 @@ class SpeedDetector:
         self.initialize_camera(use_pi_camera)
 
         # start the frames per second throughput estimator
-        self.fps = FPS().start()
+        self.frames_per_second = 0
+        self.fps_instance = FPS()
+        self.fps_instance.start()
+        self.fps_instance.stop()
         self.centroid_object_creator = CentroidObjectCreator()
 
     def parse_input_arguments(self):
@@ -125,6 +128,7 @@ class SpeedDetector:
                 logger().error("No frames from video stream.")
                 raise NoFrameFromVideoStreamException("No frames from video stream.")
             return
+        self.fps_instance.update()
         self.current_time_stamp = datetime.now()
         # resize the frame
         self.frame = imutils.resize(self.frame, width=FRAME_WIDTH_IN_PIXELS)
@@ -176,9 +180,10 @@ class SpeedDetector:
                 break
             self.set_frame_dimensions()
             centroid_object_dict = self.centroid_object_creator.create_centroid_tracker_object(self.height_of_frame,
-                                                                                  self.width_of_frame, self.rgb,
-                                                                                  self.net,
-                                                                                  self.frame)
+                                                                                               self.width_of_frame,
+                                                                                               self.rgb,
+                                                                                               self.net,
+                                                                                               self.frame)
             for speed_tracked_object in SpeedTrackerHandler.yield_a_speed_tracker_object(
                     centroid_object_dict):
                 if not isinstance(speed_tracked_object, SpeedTracker):
@@ -186,25 +191,39 @@ class SpeedDetector:
                 SpeedTrackerHandler.estimate_object_speed(self.frame, speed_tracked_object, self.meter_per_pixel)
 
             SpeedTrackerHandler.compute_speed_for_dangling_object_ids()
+
             # if the *display* flag is set, then display the current frame
             # to the screen and record if a user presses a key
             if self.open_display:
-                cv2.imshow("Car_speed_detector_frame", self.frame)
+                self.__write_frames_per_second_on_the_frame()
+                cv2.imshow("Car Speed Detector", self.frame)
                 key = cv2.waitKey(1) & 0xFF
 
                 # if the `q` key is pressed, break from the loop
                 if key == ord("q"):
                     break
 
-            # Update the FPS counter
-            self.fps.update()
+    def __write_frames_per_second_on_the_frame(self):
+        # font
+        font = cv2.FONT_HERSHEY_SIMPLEX
+        # org
+        org = (50, 50)
+        # fontScale
+        fontScale = 1
+        # Blue color in BGR
+        color = (255, 0, 0)
+        # Line thickness of 2 px
+        thickness = 2
+        # Using cv2.putText() method
+        self.frame = cv2.putText(self.frame, 'FPS={:.2f}'.format(self.fps_instance.fps), org, font,
+                                 +                   fontScale, color, thickness, cv2.LINE_AA)
 
     def clean_up(self):
         self.__perform_speed_detection = False
         # stop the timer and display FPS information
-        self.fps.stop()
-        logger().info("elapsed time: {:.2f}".format(self.fps.elapsed()))
-        logger().info("approx. FPS: {:.2f}".format(self.fps.fps()))
+        self.fps_instance.stop()
+        logger().info("elapsed time: {:.2f}".format(self.fps_instance.elapsed()))
+        logger().info("approx. FPS: {:.2f}".format(self.fps_instance.fps()))
 
         # Close the log file.
         SpeedValidator.close_log_file()
@@ -237,7 +256,7 @@ class SpeedDetector:
                 print("-" * 60)
                 return_value = False
                 os.system("sudo reboot")
-        return  return_value
+        return return_value
 
 
 if __name__ == "__main__":
