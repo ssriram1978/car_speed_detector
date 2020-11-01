@@ -6,5 +6,6 @@
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module" module-name="people-counting-opencv" />
     <orderEntry type="module" module-name="NESSP_PROJECT" />
+    <orderEntry type="module" module-name="NESSP_PROJECT" />
   </component>
 </module>

@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$USER_HOME$/git/NESSP_PROJECT/.idea/NESSP_PROJECT.iml" filepath="$USER_HOME$/git/NESSP_PROJECT/.idea/NESSP_PROJECT.iml" />
+      <module fileurl="file://$USER_HOME$/NESSP_PROJECT/.idea/NESSP_PROJECT.iml" filepath="$USER_HOME$/NESSP_PROJECT/.idea/NESSP_PROJECT.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/car_speed_detector.iml" filepath="$PROJECT_DIR$/.idea/car_speed_detector.iml" />
       <module fileurl="file://$USER_HOME$/git/People_Counter/people-counting-opencv/.idea/people-counting-opencv.iml" filepath="$USER_HOME$/git/People_Counter/people-counting-opencv/.idea/people-counting-opencv.iml" />
     </modules>

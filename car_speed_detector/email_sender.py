@@ -4,8 +4,10 @@ import os
 import smtplib
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
+from email.mime.base import MIMEBase
 import socket
 from car_speed_detector.car_speed_logging import logger
+from email import encoders
 
 # And imghdr to find the types of our images
 # Here are the email package modules we'll need
@@ -49,7 +51,11 @@ class EmailSender:
 
 
         if log_file is not None:
-            msg.attach(MIMEText(log_file.read()))
+            part = MIMEBase('application', "octet-stream")
+            part.set_payload(open(log_file, "rb").read())
+            encoders.encode_base64(part)
+            part.add_header('Content-Disposition', 'attachment', filename=log_file)
+            msg.attach(part)
 
         client = smtplib.SMTP('smtp.gmail.com', 587)
         client.starttls()
