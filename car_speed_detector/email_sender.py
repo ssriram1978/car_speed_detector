@@ -16,7 +16,7 @@ class EmailSender:
     # TODO make this as a CLI configurable param.
     username = 'speeddetector101@gmail.com'
     password = 'LearnIOT06!'
-    rcptlist = ['srinivassriram06@gmail.com', 'arjunsikka05@gmail.com', 'kr.reddy.kaushik@gmail.com', 'adityaanand.muz@gmail.com', 'ssriram.78@gmail.com', 'abhisar.muz@gmail.com', 'raja.muz@gmail.com']
+    recipient_list = ['srinivassriram06@gmail.com', 'arjunsikka05@gmail.com', 'kr.reddy.kaushik@gmail.com', 'adityaanand.muz@gmail.com', 'ssriram.78@gmail.com', 'abhisar.muz@gmail.com', 'raja.muz@gmail.com']
     host_name = socket.gethostname()
 
     @classmethod
@@ -24,6 +24,8 @@ class EmailSender:
         """
 
         """
+        status = True
+        try:
         kwargs.get('temp_file', None)
         kwargs.get('image_name', None)
         kwargs.get('log_file', None)
@@ -66,3 +68,6 @@ class EmailSender:
         logger().debug("Email Sent")
         client.quit()
         os.remove(temp_file.path)
+        except:
+            status = False
+        return status
