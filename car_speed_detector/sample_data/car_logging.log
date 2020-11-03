@@ -1,0 +1,10 @@
+2020-11-03 10:17:07,200 - speed_detector - [speed_tracker_handler.py:163] - INFO - Computed direction of trackable object id 126 to be <Direction.RIGHT_TO_LEFT: 2>
+2020-11-03 10:17:07,783 - speed_detector - [speed_tracker_handler.py:163] - INFO - Computed direction of trackable object id 127 to be <Direction.RIGHT_TO_LEFT: 2>
+2020-11-03 10:17:11,324 - speed_detector - [speed_tracker_handler.py:95] - INFO - Speed of the vehicle that just passed is: nan MPH
+2020-11-03 10:17:12,705 - speed_detector - [speed_tracker_handler.py:95] - INFO - Speed of the vehicle that just passed is: 19.10 MPH
+2020-11-03 10:17:12,730 - speed_detector - [speed_validator.py:74] - INFO - Writing car image /home/pi/101708480090.jpg to hard drive.
+2020-11-03 10:17:12,752 - speed_detector - [speed_tracker_handler.py:74] - INFO - Deleting object_id 126 from the human_tracking_dict.
+2020-11-03 10:28:03,724 - speed_detector - [speed_tracker_handler.py:163] - INFO - Computed direction of trackable object id 128 to be <Direction.LEFT_TO_RIGHT: 1>
+2020-11-03 10:28:09,122 - speed_detector - [speed_tracker_handler.py:95] - INFO - Speed of the vehicle that just passed is: 21.95 MPH
+2020-11-03 10:28:09,150 - speed_detector - [speed_validator.py:74] - INFO - Writing car image /home/pi/102804955414.jpg to hard drive.
+2020-11-03 10:28:09,172 - speed_detector - [speed_tracker_handler.py:74] - INFO - Deleting object_id 128 from the human_tracking_dict.

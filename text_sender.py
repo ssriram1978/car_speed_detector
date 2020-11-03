@@ -1,4 +1,4 @@
-import datetime;
+import datetime
 
 from twilio.rest import Client
 

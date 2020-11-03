@@ -54,6 +54,9 @@ SEND_EMAIL = True
 
 TIMEOUT_FOR_TRACKER = 3
 
+TEMP_FILE = 'temp_file'
+IMAGE_NAME = 'image_name'
+LOG_FILE = 'log_file'
 
 class Direction(Enum):
     LEFT_TO_RIGHT = 1
