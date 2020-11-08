@@ -17,6 +17,7 @@ from car_speed_detector.constants import TEMP_FILE, IMAGE_NAME, LOG_FILE
 class EmailSender:
     # TODO make this as a CLI configurable param.
     username = 'speeddetector101@gmail.com'
+    # TODO Abhisar - Get rid off this password!!!
     password = 'LearnIOT06!'
     main_recipient_list = ['srinivassriram06@gmail.com', 'arjunsikka05@gmail.com', 'kr.reddy.kaushik@gmail.com', 'adityaanand.muz@gmail.com', 'ssriram.78@gmail.com', 'abhisar.muz@gmail.com', 'raja.muz@gmail.com']
     developer_recipient_list = ['srinivassriram06@gmail.com', 'arjunsikka05@gmail.com', 'kr.reddy.kaushik@gmail.com', 'adityaanand.muz@gmail.com', 'ssriram.78@gmail.com', 'abhisar.muz@gmail.com', 'raja.muz@gmail.com']
