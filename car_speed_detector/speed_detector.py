@@ -21,7 +21,7 @@ import socket
 
 
 class SpeedDetector:
-    def __init__(self, estimate_speed_from_video_file_name=None, use_pi_camera=True, open_display=False):
+    def __init__(self, estimate_speed_from_video_file_name=None, use_pi_camera=True, open_display=True):
         # initialize the frame dimensions (we'll set them as soon as we read
         # the first frame from the video)
         self.height_of_frame = None
@@ -257,11 +257,11 @@ class SpeedDetector:
                 traceback.print_exc(file=sys.stdout)
                 print("-" * 60)
                 return_value = False
-                os.system("sudo reboot")
+                #os.system("sudo reboot")
         return return_value
 
 
 if __name__ == "__main__":
     # time.sleep(60)
     SpeedDetector().perform_speed_detection()
-    os.system("sudo reboot")
+    #os.system("sudo reboot")
