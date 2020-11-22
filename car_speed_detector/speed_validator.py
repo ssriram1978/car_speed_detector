@@ -4,11 +4,12 @@ from pathlib import Path
 from threading import Thread
 
 import cv2
-from car_speed_detector.constants import SEND_EMAIL, MAX_THRESHOLD_SPEED, LOG_FILE_NAME
+from car_speed_detector.constants import SEND_EMAIL, MAX_THRESHOLD_SPEED, LOG_FILE_NAME, TEMP_FILE, IMAGE_NAME, LOG_FILE
 from car_speed_detector.email_sender import EmailSender
 from imutils.io import TempFile
 from car_speed_detector.whats_app_message_sender import WhatsAppMessageSender
 from car_speed_detector.car_speed_logging import logger
+from car_speed_detector.email_sender import EmailSender
 
 
 class SpeedValidator:
@@ -69,7 +70,7 @@ class SpeedValidator:
                     # create a thread to send the image via email.
                     # and start it
                     # TODO Aditya - Fix this error.
-                    t = Thread(target=EmailSender.send_email, args=(TEMP_FILE=tempFile, IMAGE_NAME=imageID,))
+                    t = Thread(target=EmailSender.send_email, kwargs=dict(temp_file='tempfile.jpg',image_names='car.jpg2', ))
                     t.start()
                     image_path = os.path.join(os.getcwd(), "{}.jpg".format(imageID))
                     logger().info("Writing car image {} to hard drive.".format(image_path))

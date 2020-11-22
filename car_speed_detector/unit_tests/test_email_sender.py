@@ -24,7 +24,10 @@ class TestEmailSender(unittest.TestCase):
         
     def test_email_sender_with_debug_log(self):
         print("testing email sender...")
-        email_sent_status = EmailSender().send_email(log_file='/home/pi/git/car_speed_detector/car_speed_detector/sample_data/car_logging.log')
+        os.system("cp ../sample_data/car.jpeg2 ../sample_data/car.jpeg")
+        os.system("touch car_logging.log")
+        os.system("Email Sent >> car_logging.log")
+        email_sent_status = EmailSender().send_email(log_file='car_logging.log')
         self.assertEqual(email_sent_status, True)
         
     

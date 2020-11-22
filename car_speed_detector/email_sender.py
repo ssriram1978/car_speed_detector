@@ -35,7 +35,6 @@ class EmailSender:
             #receivers = ','.join(cls.main_recipient_list)
 
             msg = MIMEMultipart('mixed')
-            msg['Subject'] = 'From GVW speed detector camera {} - Speeding car in GVW'.format(EmailSender.host_name)
             msg['From'] = cls.username
             #msg['To'] = receivers
             alternative = MIMEMultipart('alternative')
@@ -69,8 +68,10 @@ class EmailSender:
             #client.ehlo()
             client.login(cls.username, cls.password)
             if LOG_FILE in kwargs:
+                msg['Subject'] = 'The Car Speed Detector has broke on {}'.format(EmailSender.host_name)
                 client.sendmail(cls.username, cls.developer_recipient_list, msg.as_string())
             if LOG_FILE not in kwargs:
+                msg['Subject'] = 'From GVW speed detector camera {} - Speeding car in GVW'.format(EmailSender.host_name)
                 client.sendmail(cls.username, cls.main_recipient_list, msg.as_string())
             logger().debug("Email Sent")
             client.quit()

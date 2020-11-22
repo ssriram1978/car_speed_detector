@@ -17,7 +17,7 @@ class TestSpeedDetector(unittest.TestCase):
 
     def test_speed_detector(self):
         speed_detector_inst = SpeedDetector(estimate_speed_from_video_file_name='sample_data/cars.mp4',
-                                            use_pi_camera=False, open_display=False)
+                                            use_pi_camera=False, open_display=True)
         self.assertEqual(speed_detector_inst.perform_speed_detection(), True)
         speed_detector_inst.clean_up()
         self.__cleanup()
