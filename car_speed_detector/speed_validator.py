@@ -70,7 +70,7 @@ class SpeedValidator:
                     # create a thread to send the image via email.
                     # and start it
                     # TODO Aditya - Fix this error.
-                    t = Thread(target=EmailSender.send_email, kwargs=dict(temp_file='tempfile.jpg',image_name='car.jpg'))
+                    t = Thread(target=EmailSender.send_email, kwargs=dict(temp_file=tempFile,image_name='car.jpg'))
                     t.start()
                     image_path = os.path.join(os.getcwd(), "{}.jpg".format(imageID))
                     logger().info("Writing car image {} to hard drive.".format(image_path))
