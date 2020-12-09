@@ -11,7 +11,7 @@ from car_speed_detector.car_speed_logging import logger
 from car_speed_detector.centroid_object_creator import CentroidObjectCreator
 # import the necessary packages
 from car_speed_detector.constants import PROTO_TEXT_FILE, MODEL_NAME, FRAME_WIDTH_IN_PIXELS, \
-    DISTANCE_OF_CAMERA_FROM_ROAD, TIMEOUT_FOR_TRACKER, VIDEO_DEV_ID
+    DISTANCE_OF_CAMERA_FROM_ROAD, TIMEOUT_FOR_TRACKER, VIDEO_DEV_ID, OPEN_DISPLAY
 from car_speed_detector.speed_tracker_handler import SpeedTrackerHandler
 from car_speed_detector.speed_validator import SpeedValidator
 from car_speed_detector.speed_tracker import SpeedTracker
@@ -21,7 +21,7 @@ import socket
 
 
 class SpeedDetector:
-    def __init__(self, estimate_speed_from_video_file_name=None, use_pi_camera=True, open_display=True):
+    def __init__(self, estimate_speed_from_video_file_name=None, use_pi_camera=True, open_display=False):
         # initialize the frame dimensions (we'll set them as soon as we read
         # the first frame from the video)
         self.height_of_frame = None
@@ -36,7 +36,7 @@ class SpeedDetector:
         self.args = None
         self.estimate_speed_from_video_file_name = estimate_speed_from_video_file_name
         self.__perform_speed_detection = True
-        self.open_display = open_display
+        self.open_display = True if (open_display or OPEN_DISPLAY) else False
 
         # Parse input arguments
         self.parse_input_arguments()

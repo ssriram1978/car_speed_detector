@@ -12,7 +12,7 @@ LOG_FILE_NAME = "speed_detector.csv"
 PROTO_TEXT_FILE = "MobileNetSSD_deploy.prototxt"
 
 # Max threshold for Speed in miles/hour
-MAX_THRESHOLD_SPEED = 1
+MAX_THRESHOLD_SPEED = 20
 
 VIDEO_DEV_ID = 0
 # Distance of the camera from the road.
@@ -48,7 +48,9 @@ CLASSES = ["background", "aeroplane", "bicycle", "bird", "boat",
            "dog", "horse", "motorbike", "person", "pottedplant", "sheep",
            "sofa", "train", "tvmonitor"]
 
-OPEN_DISPLAY = True
+OPEN_DISPLAY = False
+
+SPIKE_THRESHOLD = 50 
 
 SEND_EMAIL = True
 

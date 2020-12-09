@@ -1,7 +1,8 @@
 # This class servers as a common place to store all the centroids, timestamp, position and speed computed for a
 # identified object.
 import numpy as np
-from car_speed_detector.constants import MILES_PER_ONE_KILOMETER
+from car_speed_detector.constants import MILES_PER_ONE_KILOMETER, SPIKE_THRESHOLD
+from car_speed_detector.car_speed_logging import logger
 
 
 class SpeedTracker:
@@ -28,8 +29,7 @@ class SpeedTracker:
 
         # initialize the object speeds in MPH and KMPH
         self.speedMPH = None
-        self.speedKMPH = None
-
+        self.speedMPH_list = []
         # initialize two booleans, (1) used to indicate if the
         # object's speed has already been estimated or not, and (2)
         # used to indicate if the object's speed has been logged or
@@ -47,6 +47,20 @@ class SpeedTracker:
         """
         This method calculates speed by averaging the list of estimated speeds.
         """
-        # calculate the speed in KMPH and MPH
-        self.speedKMPH = np.average(self.estimated_speed_list)
-        self.speedMPH = self.speedKMPH * MILES_PER_ONE_KILOMETER
+        # calculate the speed in MPH
+        self.speedMPH_list = list(map(lambda x: x*MILES_PER_ONE_KILOMETER, self.estimated_speed_list))
+        logger().info("self.speedMPH_list = {}".format(self.speedMPH_list))
+        # Filter out skewed up values.
+        # Filter out values which are greater than its predecessor by a large value. Example: If the speedMPH_list = [1,2,1,100,2] remove 100 from this list bec ause 100 is skewed up than its predecessor by a large spike.
+        temp_speedMPH_list = []
+        for index in range(len(self.speedMPH_list)):
+            if index == 0 and abs(self.speedMPH_list[index] - self.speedMPH_list[index+1]) < SPIKE_THRESHOLD:
+                temp_speedMPH_list.append(self.speedMPH_list[index])
+            elif index == len(self.speedMPH_list)-1 and abs(self.speedMPH_list[index] - self.speedMPH_list[index-1]) < SPIKE_THRESHOLD :
+                temp_speedMPH_list.append(self.speedMPH_list[index])
+            elif abs(self.speedMPH_list[index]-self.speedMPH_list[index+1]) < SPIKE_THRESHOLD and abs(self.speedMPH_list[index] - self.speedMPH_list[index-1]) < SPIKE_THRESHOLD:
+                temp_speedMPH_list.append(self.speedMPH_list[index])
+        self.speedMPH_list = temp_speedMPH_list
+        logger().info("spike corrected self.speedMPH_list = {}".format(self.speedMPH_list))
+        self.speedMPH = np.average(self.speedMPH_list)
+
