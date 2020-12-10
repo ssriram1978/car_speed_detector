@@ -28,7 +28,7 @@ class SpeedTracker:
         self.empty_recorded_timestamp = None
 
         # initialize the object speeds in MPH and KMPH
-        self.speedMPH = None
+        self.speedMPH = 0
         self.speedMPH_list = []
         # initialize two booleans, (1) used to indicate if the
         # object's speed has already been estimated or not, and (2)
@@ -50,8 +50,12 @@ class SpeedTracker:
         # calculate the speed in MPH
         self.speedMPH_list = list(map(lambda x: x*MILES_PER_ONE_KILOMETER, self.estimated_speed_list))
         logger().info("self.speedMPH_list = {}".format(self.speedMPH_list))
-        if len(self.speedMPH_list) <=1:
+        if len(self.speedMPH_list) == 0:
             return
+        elif len(self.speedMPH_list) == 1:
+            self.speedMPH = self.speedMPH_list[1]
+            return
+        
         # Filter out skewed up values.
         # Filter out values which are greater than its predecessor by a large value. Example: If the speedMPH_list = [1,2,1,100,2] remove 100 from this list bec ause 100 is skewed up than its predecessor by a large spike.
         temp_speedMPH_list = []
