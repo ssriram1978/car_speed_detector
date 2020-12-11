@@ -16,4 +16,4 @@ echo "script exiting..." &>> /home/pi/car_speed_detector.log
 python3 /home/pi/git/car_speed_detector/email_crash_log.py
 echo "rebooting..." &>> /home/pi/car_speed_detector.log
 python3 /home/pi/git/car_speed_detector/car_speed_detector/email_sender.py
-#sudo reboot
+sudo reboot
