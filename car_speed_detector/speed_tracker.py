@@ -53,18 +53,26 @@ class SpeedTracker:
         if len(self.speedMPH_list) == 0:
             return
         elif len(self.speedMPH_list) == 1:
-            self.speedMPH = self.speedMPH_list[1]
+            self.speedMPH = self.speedMPH_list[0]
             return
         
-        # Filter out skewed up values.
+        # Filter out skewed up values. [5, 10, 8, 100, 8, 3] => [5, 10, 8, 8, 3] 
+        # self.speedMPH_list = [2.3114675882339433, 9.484122199976445, 2.376011471462965, 6.813924186015028, 72.87371060928051]
         # Filter out values which are greater than its predecessor by a large value. Example: If the speedMPH_list = [1,2,1,100,2] remove 100 from this list bec ause 100 is skewed up than its predecessor by a large spike.
         temp_speedMPH_list = []
         for index in range(len(self.speedMPH_list)):
             if index == 0 and abs(self.speedMPH_list[index] - self.speedMPH_list[index+1]) < SPIKE_THRESHOLD:
                 temp_speedMPH_list.append(self.speedMPH_list[index])
-            elif index == len(self.speedMPH_list)-1 and abs(self.speedMPH_list[index] - self.speedMPH_list[index-1]) < SPIKE_THRESHOLD :
-                temp_speedMPH_list.append(self.speedMPH_list[index])
-            elif abs(self.speedMPH_list[index]-self.speedMPH_list[index+1]) < SPIKE_THRESHOLD and abs(self.speedMPH_list[index] - self.speedMPH_list[index-1]) < SPIKE_THRESHOLD:
+            elif index == len(self.speedMPH_list)-1:
+                diff_between_last_and_last_but_one = abs(self.speedMPH_list[index] - self.speedMPH_list[index-1]) 
+                if diff_between_last_and_last_but_one < SPIKE_THRESHOLD :
+                    temp_speedMPH_list.append(self.speedMPH_list[index])
+                else:
+                    continue
+            elif abs(self.speedMPH_list[index]-self.speedMPH_list[index+1]) > SPIKE_THRESHOLD and \
+            abs(self.speedMPH_list[index] - self.speedMPH_list[index-1]) > SPIKE_THRESHOLD:
+                    continue
+            else:
                 temp_speedMPH_list.append(self.speedMPH_list[index])
         self.speedMPH_list = temp_speedMPH_list
         logger().info("spike corrected self.speedMPH_list = {}".format(self.speedMPH_list))
