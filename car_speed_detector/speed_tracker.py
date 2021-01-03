@@ -55,7 +55,7 @@ class SpeedTracker:
         elif len(self.speedMPH_list) == 1:
             if self.speedMPH_list[0] < SPIKE_THRESHOLD:
                 self.speedMPH = self.speedMPH_list[0]
-                return
+            return
         
         # Filter out skewed up values. [5, 10, 8, 100, 8, 3] => [5, 10, 8, 8, 3] 
         # self.speedMPH_list = [2.3114675882339433, 9.484122199976445, 2.376011471462965, 6.813924186015028, 72.87371060928051]
