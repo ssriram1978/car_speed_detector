@@ -20,3 +20,6 @@ cat /etc/xdg/lxsession/LXDE-pi/autostart
 @/bin/bash /home/pi/git/car_speed_detector/on_reboot.sh
 @pcmanfm --desktop --profile LXDE-pi
 @xscreensaver -no-splash
+
+# Contributors:
+  Abhisar Anand, Aditya Anand, Arjun Sikka, Srinivas Sriram, and Sriram Sridhar
