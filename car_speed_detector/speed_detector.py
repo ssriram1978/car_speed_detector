@@ -16,6 +16,7 @@ from car_speed_detector.speed_tracker_handler import SpeedTrackerHandler
 from car_speed_detector.speed_validator import SpeedValidator
 from car_speed_detector.speed_tracker import SpeedTracker
 from car_speed_detector.frames_per_second import FPS
+from car_speed_detector.adjust_gamma import adjust_gamma
 from imutils.video import VideoStream
 import socket
 
@@ -100,7 +101,7 @@ class SpeedDetector:
             # self.video_stream.set(cv2.CAP_PROP_FPS, int(10))
         elif use_pi_camera:
             logger().info("Warming up Raspberry PI camera connected via the PCB slot.")
-            self.video_stream = VideoStream(usePiCamera=True).start()
+            self.video_stream = VideoStream(usePiCamera=True, image_effect = 'colorbalance', awb_mode = 'auto', rotation=180).start()
         else:
             logger().debug("Setting video capture device to {}.".format(VIDEO_DEV_ID))
             self.video_stream = VideoStream(src=VIDEO_DEV_ID).start()
@@ -120,6 +121,8 @@ class SpeedDetector:
                 raise ValueError
         else:
             self.frame = self.video_stream.read()
+            self.frame = adjust_gamma(self.frame, gamma=1.5)
+            #self.frame = imutils.rotate(self.frame, 180)
         if self.frame is None:
             if self.estimate_speed_from_video_file_name:
                 for _ in range(TIMEOUT_FOR_TRACKER + 1):
