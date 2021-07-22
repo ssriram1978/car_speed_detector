@@ -1,5 +1,5 @@
-# car_speed_detector
-car_speed_detector
+# Car Speed Detector
+Car Speed Detector
 
 This project is a community based project. 
 It aims to do the following:
