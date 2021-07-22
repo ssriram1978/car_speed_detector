@@ -5,7 +5,7 @@ echo "source /opt/intel/openvino/bin/setupvar.sh" &>> /home/pi/car_speed_detecto
 source /opt/intel/openvino/bin/setupvars.sh
 echo "loading virtualenvwrapper.sh..." &>> /home/pi/car_speed_detector.log
 source `which virtualenvwrapper.sh`
-echo "accessing virtualenv..." &>> /home/pi/car_speed_detector.log
+echo "accessing virtualenv py3cv4..." &>> /home/pi/car_speed_detector.log
 workon py3cv4
 cd /home/pi
 echo "export PYTHONPATH=$PYTHONPATH:/home/pi/git/car_speed_detector"
