@@ -3,7 +3,7 @@
 import numpy as np
 from car_speed_detector.constants import MILES_PER_ONE_KILOMETER, SPIKE_THRESHOLD
 from car_speed_detector.car_speed_logging import logger
-import pandas as pd
+#import pandas as pd
 
 class SpeedTracker:
     """
@@ -13,7 +13,7 @@ class SpeedTracker:
         # store the object ID, then initialize a list of centroids
         # using the current centroid
         self.object_id = object_id
-        self.Speeds =  pd.DataFrame({"Speeds": []})
+        #self.Speeds =  pd.DataFrame({"Speeds": []})
         # Store the first centroid object into the centroids list.
         # Subsequent centroids SHALL be appended to the centroids list.
         self.centroids = [centroid]
