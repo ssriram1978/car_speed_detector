@@ -12,11 +12,11 @@ LOG_FILE_NAME = "speed_detector.csv"
 PROTO_TEXT_FILE = "MobileNetSSD_deploy.prototxt"
 
 # Max threshold for Speed in miles/hour
-MAX_THRESHOLD_SPEED = 25
+MAX_THRESHOLD_SPEED = 5
 
 VIDEO_DEV_ID = 0
 # Distance of the camera from the road. This is measured in meters (not feet).
-DISTANCE_OF_CAMERA_FROM_ROAD = 20
+DISTANCE_OF_CAMERA_FROM_ROAD = 50
 
 # Frame width.
 FRAME_WIDTH_IN_PIXELS = 400
@@ -54,11 +54,19 @@ SPIKE_THRESHOLD = 50
 
 SEND_EMAIL = True
 
+SEND_WHATS_APP = True
+
 TIMEOUT_FOR_TRACKER = 3
 
 TEMP_FILE = 'temp_file'
 IMAGE_NAME = 'image_name'
 LOG_FILE = 'log_file'
+CAR_SPEED = 'speed'
+SPEEDING_CAR_IMAGE = 'image_path'
+
+USERNAME = 'username'
+PASSWORD = 'password'
+
 
 class Direction(Enum):
     LEFT_TO_RIGHT = 1

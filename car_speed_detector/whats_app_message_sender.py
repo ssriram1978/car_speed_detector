@@ -1,60 +1,67 @@
-# This file defines the logic to send an alert with the speeding car image in whatsapp.
-
-#from selenium import webdriver
-from datetime import datetime
-from car_speed_detector.constants import WHATSAPP_CHAT_GROUP_NAME, BROWSER_LOCATION, BROWSER_EXECUTABLE_PATH
-from car_speed_detector.car_speed_logging import logger
-from car_speed_detector.singleton_template import Singleton
+from twilio.rest import Client
+import socket
+from car_speed_detector.constants import CAR_SPEED, SPEEDING_CAR_IMAGE
+import os
+import boto3
 import time
+from dotenv import load_dotenv
+
+load_dotenv(verbose=True)
+
+# client credentials are read from TWILIO_ACCOUNT_SID and AUTH_TOKEN
+client = Client(os.environ['TWILIO_ACCOUNT_SID'], os.environ['TWILIO_AUTH_TOKEN'])
+host_name = socket.gethostname()
+
+# this is the Twilio sandbox testing number
+from_whatsapp_number='whatsapp:+14155238886'
+# replace this number with your own WhatsApp Messaging number
+to_whatsapp_number='whatsapp:+19788097936'
+
+def aws_session(region_name='us-east-1'):
+    return boto3.session.Session(aws_access_key_id=os.getenv('AWS_ACCESS_KEY_ID'),
+                                aws_secret_access_key=os.getenv('AWS_ACCESS_KEY_SECRET'),
+                                region_name=region_name)
+session = aws_session()
+s3_resource = session.resource('s3')
+
+def make_bucket(name, acl):
+    session = aws_session()
+    s3_resource = session.resource('s3')
+    return s3_resource.create_bucket(Bucket=name, ACL=acl)
+
+s3_bucket = make_bucket(host_name, 'public-read')
+
+def upload_file_to_bucket(bucket_name, file_path):
+    session = aws_session()
+    s3_resource = session.resource('s3')
+    file_dir, file_name = os.path.split(file_path)
+
+    bucket = s3_resource.Bucket(bucket_name)
+    bucket.upload_file(
+      Filename=file_path,
+      Key=file_name,
+      ExtraArgs={'ACL': 'public-read'}
+    )
+
+    s3_url = f"https://{bucket_name}.s3.amazonaws.com/{file_name}"
+    time.sleep(2)
+    return s3_url
 
 
-class WhatsAppMessageSender(metaclass=Singleton):
-    """
-    This class implements the logic to send Whatsapp message to the specified group with the information about the
-    speeding car.
-    """
+def send_whatsapp_message(**kwargs):
+    #client.messages.create(body='From GVW Car speed detector camera {}, speeding car in GVW - {} mph.'.format(host_name, kwargs[CAR_SPEED]),
+    #                   from_=from_whatsapp_number,
+    #                   to=to_whatsapp_number)
+    s3_url = upload_file_to_bucket(host_name, kwargs[SPEEDING_CAR_IMAGE])
+    print("sending a whatsapp message to {}".format(s3_url))
+    message = client.messages.create(body='From GVW Car speed detector camera {}, speeding car in GVW - {} mph.'.format(host_name, kwargs[CAR_SPEED]),
+             #media_url=[s3_url],
+             media_url=['https://images.unsplash.com/photo-1545093149-618ce3bcf49d?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=668&q=80'],
+            from_=from_whatsapp_number,
+            to=to_whatsapp_number
+        )  
 
-    def __init__(self, browser_location=BROWSER_LOCATION, browser_executable_path=BROWSER_EXECUTABLE_PATH):
-        pass
-        #speeding_car_opts = webdriver.ChromeOptions()
-        #speeding_car_opts.binary_location = browser_location
-        #self.driver = webdriver.Chrome(executable_path=browser_executable_path, options=speeding_car_opts)
-        #self.driver.get('https://web.whatsapp.com')
-        #time.sleep(10)
+    print("whatsapp message sent status = {}".format(message))
 
-    def send_message(self, speed, temp_file, image_name):
-        """
-        This method is used by the caller to trigger an alert via whatsapp with the
-        speeding car image and a text alert.
-        :param temp_file: an instance of type TempFile.
-        :param image_name: Name of the image.
-        :return:
-        """
-        pass
-        #to = (WHATSAPP_CHAT_GROUP_NAME)
-        #now = datetime.now()
-        #message = (
-        #    "From GVW, there is a speeding car of speed = {}, at time = {} on date = {} - day = {}, month = {} , "
-         #   "year = {}.".format(speed, now.strftime("%X"), now.strftime("%d"), now.strftime("%A"), now.strftime("%B"),
-         #                       now.strftime("%Y")))
-        #logger().info(message)
-
-        # finds the name of the group chat
-        #user = self.driver.find_element_by_xpath('//span[@title = "{}"]'.format(to))
-        # clicks on the name of the group chat
-        #user.click()
-        # finds the message box
-        #messagebox = self.driver.find_element_by_xpath('//*[@id="main"]/footer/div[1]/div[2]/div/div[2]')
-        # pastes the message into the message box
-        #messagebox.send_keys(message)
-        # finds the button to send the message
-        #button = self.driver.find_element_by_xpath('//*[@id="main"]/footer/div[1]/div[3]')
-        # clicks the button to send the message
-        #button.click()
-        #TODO Send the image in whatsapp.
-        # with open(temp_file.path, 'rb') as fp:
-        # jpgpart = email.mime.image.MIMEImage(fp.read())
-        #             jpgpart.add_header('Content-Disposition', 'attachment', filename=image_name)
-        # attach jpgpart into messagebox = driver.find_element_by_xpath
-        # finds the button to send the message
-
+if __name__ == '__main__':
+    send_whatsapp_message(speed=10,image_path='/home/pi/speeding_car_images/145234833414.jpg')

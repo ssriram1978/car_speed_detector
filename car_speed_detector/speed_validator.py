@@ -4,13 +4,12 @@ from pathlib import Path
 from threading import Thread
 
 import cv2
-from car_speed_detector.constants import SEND_EMAIL, MAX_THRESHOLD_SPEED, LOG_FILE_NAME, TEMP_FILE, IMAGE_NAME, LOG_FILE
+from car_speed_detector.constants import SEND_WHATS_APP, SEND_EMAIL, MAX_THRESHOLD_SPEED, LOG_FILE_NAME, TEMP_FILE, IMAGE_NAME, LOG_FILE
 from car_speed_detector.email_sender import EmailSender
 from imutils.io import TempFile
-from car_speed_detector.whats_app_message_sender import WhatsAppMessageSender
 from car_speed_detector.car_speed_logging import logger
 from car_speed_detector.email_sender import EmailSender
-
+from car_speed_detector.whats_app_message_sender import send_whatsapp_message
 
 class SpeedValidator:
     log_file = None
@@ -72,12 +71,15 @@ class SpeedValidator:
                     # TODO Aditya - Fix this error.
                     t = Thread(target=EmailSender.send_email, kwargs=dict(temp_file=tempFile,image_name= '{}.jpg'.format(EmailSender.host_name)))
                     t.start()
-                    image_path = os.path.join(os.getcwd(), "{}.jpg".format(imageID))
+                    image_path = os.path.join(os.getcwd(), "speeding_car_images/{}.jpg".format(imageID))
                     logger().info("Writing car image {} to hard drive.".format(image_path))
                     cv2.imwrite(image_path, frame)
-                    #t2 = Thread(target=WhatsAppMessageSender().send_message(speed=trackable_object.speedMPH,
-                     #                                                       image_path=image_path))
-                    #t2.start()
+                    if SEND_WHATS_APP:
+                        # send a whatsapp message with the image.
+                        send_whatsapp_message()
+                        t2 = Thread(target=send_whatsapp_message(kwargs=dict(speed=trackable_object.speedMPH,
+                                                                               image_path=image_path)))
+                        t2.start()
                     # log the event in the log file
                     info = "{},{},{},{},{},{}\n".format(year, month,
                                                         day, time, trackable_object.speedMPH, imageID)
@@ -86,6 +88,7 @@ class SpeedValidator:
                     info = "{},{},{},{},{}\n".format(year, month,
                                                      day, time, trackable_object.speedMPH)
                 cls.log_file.write(info)
+
 
                 # set the object has logged
                 trackable_object.logged = True

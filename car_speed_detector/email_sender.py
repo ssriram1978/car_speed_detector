@@ -9,16 +9,13 @@ from email.mime.base import MIMEBase
 import socket
 from car_speed_detector.car_speed_logging import logger
 from email import encoders
-from car_speed_detector.constants import TEMP_FILE, IMAGE_NAME, LOG_FILE
-
+from car_speed_detector.constants import USERNAME, PASSWORD, TEMP_FILE, IMAGE_NAME, LOG_FILE
+from dotenv import load_dotenv
+load_dotenv(verbose=True)
 # And imghdr to find the types of our images
 # Here are the email package modules we'll need
 
 class EmailSender:
-    # TODO make this as a CLI configurable param.
-    username = 'speeddetector101@gmail.com'
-    # TODO Abhisar - Get rid off this password!!!
-    password = 'LearnIOT06!'
     main_recipient_list = ['srinivassriram06@gmail.com', 'arjunsikka05@gmail.com', 'kr.reddy.kaushik@gmail.com', 'adityaanand.muz@gmail.com', 'ssriram.78@gmail.com', 'abhisar.muz@gmail.com', 'raja.muz@gmail.com']
     developer_recipient_list = ['srinivassriram06@gmail.com', 'arjunsikka05@gmail.com', 'kr.reddy.kaushik@gmail.com', 'adityaanand.muz@gmail.com', 'ssriram.78@gmail.com', 'abhisar.muz@gmail.com', 'raja.muz@gmail.com']
     
@@ -35,7 +32,7 @@ class EmailSender:
             #receivers = ','.join(cls.main_recipient_list)
 
             msg = MIMEMultipart('mixed')
-            msg['From'] = cls.username
+            msg['From'] = os.getenv('USERNAME')
             #msg['To'] = receivers
             alternative = MIMEMultipart('alternative')
                 
@@ -66,10 +63,10 @@ class EmailSender:
             client.starttls()
             #client = smtplib.SMTP_SSL('smtp.gmail.com', 465)
             #client.ehlo()
-            client.login(cls.username, cls.password)
+            client.login(os.getenv('username'), os.getenv('password'))
             if LOG_FILE in kwargs:
                 msg['Subject'] = 'The Car Speed Detector has broke on {}'.format(EmailSender.host_name)
-                client.sendmail(cls.username, cls.developer_recipient_list, msg.as_string())
+                client.sendmail(os.getenv('username'), cls.developer_recipient_list, msg.as_string())
             if LOG_FILE not in kwargs:
                 msg['Subject'] = 'From GVW speed detector camera {} - Speeding car in GVW'.format(EmailSender.host_name)
                 client.sendmail(cls.username, cls.main_recipient_list, msg.as_string())

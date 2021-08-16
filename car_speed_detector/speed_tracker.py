@@ -78,5 +78,5 @@ class SpeedTracker:
         self.speedMPH_list = temp_speedMPH_list
         logger().info("spike corrected self.speedMPH_list = {}".format(self.speedMPH_list))
         self.speedMPH = np.average(self.speedMPH_list)
-        self.Speeds = self.Speeds.append(self.speedMPH, ignore_index=True)
-        self.Speeds.to_csv('Speeds.csv')
+        #self.Speeds = self.Speeds.append(self.speedMPH, ignore_index=True)
+        #self.Speeds.to_csv('Speeds.csv')
