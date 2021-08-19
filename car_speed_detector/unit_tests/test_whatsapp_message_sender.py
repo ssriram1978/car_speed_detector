@@ -9,9 +9,8 @@ class TestWhatsappMessageSender(unittest.TestCase):
     This class unit tests WhatsAppMessageSender class.
     """
 
-    def test_speed_detector(self):
-        whatsapp_message_sender_inst = WhatsAppMessageSender(
-            browser_location='/usr/bin/google-chrome',
-            browser_executable_path='/home/sriramsridhar/Downloads/chromedriver')
-        image_path = os.path.join(os.getcwd(), 'car_test.jpg')
-        self.assertEqual(whatsapp_message_sender_inst.send_message(20, image_path=image_path), None)
+    def test_whatsapp_message_sender(self):
+        WhatsAppMessageSender().send_whatsapp_message(speed=10,
+                                                      image_path=os.path.join(os.path.dirname(__file__),
+                                                                              '../sample_data/speeding_car.jpg'))
+

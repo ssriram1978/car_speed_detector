@@ -4,12 +4,14 @@ from pathlib import Path
 from threading import Thread
 
 import cv2
-from car_speed_detector.constants import SEND_WHATS_APP, SEND_EMAIL, MAX_THRESHOLD_SPEED, LOG_FILE_NAME, TEMP_FILE, IMAGE_NAME, LOG_FILE
+from car_speed_detector.constants import SEND_WHATS_APP, SEND_EMAIL, MAX_THRESHOLD_SPEED, LOG_FILE_NAME, TEMP_FILE, \
+    IMAGE_NAME, LOG_FILE
 from car_speed_detector.email_sender import EmailSender
 from imutils.io import TempFile
 from car_speed_detector.car_speed_logging import logger
 from car_speed_detector.email_sender import EmailSender
-from car_speed_detector.whats_app_message_sender import send_whatsapp_message
+from car_speed_detector.whats_app_message_sender import WhatsAppMessageSender
+
 
 class SpeedValidator:
     log_file = None
@@ -50,11 +52,17 @@ class SpeedValidator:
                 day = time_stamp.strftime("%d")
                 time = time_stamp.strftime("%H:%M:%S")
 
-                if SEND_EMAIL:
-                    # initialize the image id, and the temporary file
-                    imageID = time_stamp.strftime("%H%M%S%f")
-                    tempFile = TempFile()
+                # initialize the image id, and the temporary file
+                imageID = datetime.now().strftime("%d-%b-%Y-%H-%M-%S-%f")
+                tempFile = TempFile()
+                curr_path = os.path.join(os.getcwd(), "speeding_car_images")
+                if not os.path.exists(curr_path):
+                    os.makedirs(curr_path)
+                image_path = "{}/{}.png".format(curr_path, imageID)
+                logger().info("Writing car image {} to hard drive.".format(image_path))
+                cv2.imwrite(image_path, frame)
 
+                if SEND_EMAIL:
                     # write the date and speed on the image.
                     cv2.putText(frame, datetime.now().strftime("%A %d %B %Y %I:%M:%S%p"),
                                 (10, frame.shape[0] - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.75, (0, 255, 0), 1)
@@ -68,27 +76,21 @@ class SpeedValidator:
 
                     # create a thread to send the image via email.
                     # and start it
-                    # TODO Aditya - Fix this error.
-                    t = Thread(target=EmailSender.send_email, kwargs=dict(temp_file=tempFile,image_name= '{}.jpg'.format(EmailSender.host_name)))
+                    t = Thread(target=EmailSender.send_email,
+                               kwargs=dict(temp_file=tempFile, image_path='{}.png'.format(imageID)))
                     t.start()
-                    image_path = os.path.join(os.getcwd(), "speeding_car_images/{}.jpg".format(imageID))
-                    logger().info("Writing car image {} to hard drive.".format(image_path))
-                    cv2.imwrite(image_path, frame)
-                    if SEND_WHATS_APP:
-                        # send a whatsapp message with the image.
-                        send_whatsapp_message()
-                        t2 = Thread(target=send_whatsapp_message(kwargs=dict(speed=trackable_object.speedMPH,
-                                                                               image_path=image_path)))
-                        t2.start()
-                    # log the event in the log file
-                    info = "{},{},{},{},{},{}\n".format(year, month,
-                                                        day, time, trackable_object.speedMPH, imageID)
-                else:
-                    # log the event in the log file
-                    info = "{},{},{},{},{}\n".format(year, month,
-                                                     day, time, trackable_object.speedMPH)
-                cls.log_file.write(info)
 
+                if SEND_WHATS_APP:
+                    # send a whatsapp message with the image.
+                    t2 = Thread(target=WhatsAppMessageSender().send_whatsapp_message,
+                        kwargs=dict(speed=trackable_object.speedMPH,
+                                    image_path=image_path))
+                    t2.start()
+
+                # log the event in the log file
+                info = "{},{},{},{},{},{}\n".format(year, month,
+                                                        day, time, trackable_object.speedMPH, imageID)
+                cls.log_file.write(info)
 
                 # set the object has logged
                 trackable_object.logged = True

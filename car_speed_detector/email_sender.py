@@ -74,7 +74,7 @@ class EmailSender:
             client.quit()
             #os.remove(TEMP_FILE.path)
             if TEMP_FILE in kwargs:
-                logger().debug("file name={}.".format(kwargs[TEMP_FILE].path))
+                logger().info("Removing temp file name={}.".format(kwargs[TEMP_FILE].path))
                 os.system("rm -rf {}".format(kwargs[TEMP_FILE].path))
         except Exception as e:
                 logger().error("Caught an exception while sending an email {}....".format(
@@ -84,4 +84,8 @@ class EmailSender:
                 traceback.print_exc(file=sys.stdout)
                 print("-" * 60)
                 status = False
+        finally:
+            if TEMP_FILE in kwargs:
+                logger().info("Removing temp file name={}.".format(kwargs[TEMP_FILE].path))
+                os.system("rm -rf {}".format(kwargs[TEMP_FILE].path))
         return status

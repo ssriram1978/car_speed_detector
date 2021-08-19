@@ -33,7 +33,7 @@ class TestSpeedDetector(unittest.TestCase):
         self.assertEqual(speed_detector_inst.perform_speed_detection(), True)
         speed_dict = speed_detector_inst.get_speed_dict()
         self.assertEqual(speed_detector_inst.get_direction(), repr(Direction.LEFT_TO_RIGHT))
-        self.assertLessEqual(speed_detector_inst.get_computed_speed(), 17)
+        self.assertLessEqual(speed_detector_inst.get_computed_speed(), 20)
 
         speed_detector_inst.clean_up()
         self.__cleanup()

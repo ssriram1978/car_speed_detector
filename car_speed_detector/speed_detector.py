@@ -227,9 +227,9 @@ class SpeedDetector:
     def clean_up(self):
         self.__perform_speed_detection = False
         # stop the timer and display FPS information
-        self.fps_instance.stop()
         logger().info("elapsed time: {:.2f}".format(self.fps_instance.elapsed()))
-        logger().info("approx. FPS: {:.2f}".format(self.fps_instance.fps()))
+        #logger().info("approx. FPS: {:.2f}".format(self.fps_instance.fps()))
+        self.fps_instance.stop()
 
         # Close the log file.
         SpeedValidator.close_log_file()
