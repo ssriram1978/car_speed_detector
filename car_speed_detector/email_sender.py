@@ -32,7 +32,7 @@ class EmailSender:
             #receivers = ','.join(cls.main_recipient_list)
 
             msg = MIMEMultipart('mixed')
-            msg['From'] = os.getenv('USERNAME')
+            msg['From'] = os.getenv(USERNAME)
             #msg['To'] = receivers
             alternative = MIMEMultipart('alternative')
                 
@@ -63,13 +63,14 @@ class EmailSender:
             client.starttls()
             #client = smtplib.SMTP_SSL('smtp.gmail.com', 465)
             #client.ehlo()
-            client.login(os.getenv('username'), os.getenv('password'))
+            client.login(os.getenv(USERNAME), os.getenv(PASSWORD))
+            logger().info(f'using username={os.getenv(USERNAME)}, password={os.getenv(PASSWORD)}')
             if LOG_FILE in kwargs:
                 msg['Subject'] = 'The Car Speed Detector has broke on {}'.format(EmailSender.host_name)
-                client.sendmail(os.getenv('username'), cls.developer_recipient_list, msg.as_string())
+                client.sendmail(os.getenv(USERNAME), cls.developer_recipient_list, msg.as_string())
             if LOG_FILE not in kwargs:
                 msg['Subject'] = 'From GVW speed detector camera {} - Speeding car in GVW'.format(EmailSender.host_name)
-                client.sendmail(cls.username, cls.main_recipient_list, msg.as_string())
+                client.sendmail(os.getenv(USERNAME), cls.main_recipient_list, msg.as_string())
             logger().debug("Email Sent")
             client.quit()
             #os.remove(TEMP_FILE.path)
