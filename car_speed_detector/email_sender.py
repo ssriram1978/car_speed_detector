@@ -16,9 +16,8 @@ load_dotenv(verbose=True)
 # Here are the email package modules we'll need
 
 class EmailSender:
-    main_recipient_list = ['srinivassriram06@gmail.com', 'arjunsikka05@gmail.com', 'kr.reddy.kaushik@gmail.com', 'adityaanand.muz@gmail.com', 'ssriram.78@gmail.com', 'abhisar.muz@gmail.com', 'raja.muz@gmail.com']
-    developer_recipient_list = ['srinivassriram06@gmail.com', 'arjunsikka05@gmail.com', 'kr.reddy.kaushik@gmail.com', 'adityaanand.muz@gmail.com', 'ssriram.78@gmail.com', 'abhisar.muz@gmail.com', 'raja.muz@gmail.com']
-    
+    main_recipient_list = os.getenv('RECIPIENTS_LIST').split(',')
+    developer_recipient_list = os.getenv('DEVELOPERS_LIST').split(',')
     host_name = socket.gethostname()
 
     @classmethod
@@ -64,7 +63,6 @@ class EmailSender:
             #client = smtplib.SMTP_SSL('smtp.gmail.com', 465)
             #client.ehlo()
             client.login(os.getenv(USERNAME), os.getenv(PASSWORD))
-            logger().info(f'using username={os.getenv(USERNAME)}, password={os.getenv(PASSWORD)}')
             if LOG_FILE in kwargs:
                 msg['Subject'] = 'The Car Speed Detector has broke on {}'.format(EmailSender.host_name)
                 client.sendmail(os.getenv(USERNAME), cls.developer_recipient_list, msg.as_string())
