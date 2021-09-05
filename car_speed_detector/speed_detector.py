@@ -101,8 +101,8 @@ class SpeedDetector:
             # self.video_stream.set(cv2.CAP_PROP_FPS, int(10))
         elif use_pi_camera:
             logger().info("Warming up Raspberry PI camera connected via the PCB slot.")
-            self.video_stream = VideoStream(usePiCamera=True, image_effect = 'colorbalance', awb_mode = 'auto').start()
-            #self.video_stream = VideoStream(usePiCamera=True, image_effect = 'colorbalance', awb_mode = 'auto', rotation=180).start()
+            #self.video_stream = VideoStream(usePiCamera=True, image_effect = 'colorbalance', awb_mode = 'auto').start()
+            self.video_stream = VideoStream(usePiCamera=True, image_effect = 'colorbalance', awb_mode = 'auto', rotation=180).start()
         else:
             logger().debug("Setting video capture device to {}.".format(VIDEO_DEV_ID))
             self.video_stream = VideoStream(src=VIDEO_DEV_ID).start()
