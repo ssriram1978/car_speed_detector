@@ -81,7 +81,7 @@ class SpeedValidator:
                     # send a whatsapp message with the image.
                     t2 = Thread(target=WhatsAppMessageSender().send_whatsapp_message,
                         kwargs=dict(speed=trackable_object.speedMPH,
-                                    image_path=image_path))
+                                    image_name=image_path))
                     t2.start()
 
                 # log the event in the log file
