@@ -35,7 +35,6 @@ class WhatsAppMessageSender(object):
         # this is the Twilio sandbox testing number
         self.__from_whatsapp_number = os.environ['WHATSAPP_FROM_NUMBER']
         # replace this number with your own WhatsApp Messaging number
-        self.__to_whatsapp_number = os.environ['WHATSAPP_TO_NUMBER']
 
         try:
             logger().info("Trying to create bucket {}.".format(self.__host_name))
@@ -69,14 +68,18 @@ class WhatsAppMessageSender(object):
         if not s3_url:
             logger().error("Unable to create a s3_url")
             return
+        destination_number_list = os.environ['WHATSAPP_TO_NUMBER'].split(',')
+        for destination_number in destination_number_list:
+            self.send_whatsapp_message_to_this_destination(s3_url, destination_number)
+
+    def send_whatsapp_message_to_this_destination(self, s3_url, destination_number):
         logger().info("sending a whatsapp message to {}".format(s3_url))
         message = self.__client.messages.create(
             body='From GVW Car speed detector camera {}, speeding car in GVW - {} mph.'.format(self.__host_name,
-                                                                                               kwargs[CAR_SPEED]),
+                                                                                               s3_url),
             media_url=[s3_url],
-            #media_url=['https://s3.amazonaws.com/srirams-macbook-pro.local/owl.png'],
             from_=self.__from_whatsapp_number,
-            to=self.__to_whatsapp_number
+            to=destination_number
         )
         logger().info("whatsapp message sent status = {}".format(message))
 
