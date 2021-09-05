@@ -70,13 +70,13 @@ class WhatsAppMessageSender(object):
             return
         destination_number_list = os.environ['WHATSAPP_TO_NUMBER'].split(',')
         for destination_number in destination_number_list:
-            self.send_whatsapp_message_to_this_destination(s3_url, destination_number)
+            self.send_whatsapp_message_to_this_destination(kwargs[CAR_SPEED], s3_url, destination_number)
 
-    def send_whatsapp_message_to_this_destination(self, s3_url, destination_number):
+    def send_whatsapp_message_to_this_destination(self, curr_speed, s3_url, destination_number):
         logger().info("sending a whatsapp message to {}".format(s3_url))
         message = self.__client.messages.create(
-            body='From GVW Car speed detector camera {}, speeding car in GVW - {} mph.'.format(self.__host_name,
-                                                                                               s3_url),
+                body='From GVW Car speed detector camera located at {}, speeding car in GVW - {} mph url: {}.'.format(self.__host_name,
+                                                                                                curr_speed, s3_url),
             media_url=[s3_url],
             from_=self.__from_whatsapp_number,
             to=destination_number
