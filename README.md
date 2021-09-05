@@ -10,9 +10,9 @@ It aims to do the following:
 How to install the correct Intel Openvino toolkit compatible with this application?
 ------------------------------
 Just run this script provided in this git repository. 
-'''
+```
 /bin/bash /home/pi/git/car_speed_detector/install_openvino.sh
-'''
+```
 
 How to run this application automatically on rebooting raspberry Pi?
 -----------------
