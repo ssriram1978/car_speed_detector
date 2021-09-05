@@ -28,23 +28,20 @@ class EmailSender:
         status = True
         try:
             logger().info("Sending Email")
-            #receivers = ','.join(cls.main_recipient_list)
 
             msg = MIMEMultipart('mixed')
             msg['From'] = os.getenv(USERNAME)
-            #msg['To'] = receivers
             alternative = MIMEMultipart('alternative')
                 
-            if TEMP_FILE in kwargs and IMAGE_NAME in kwargs:
+            if IMAGE_NAME in kwargs:
                 textplain = MIMEText('Captured a picture of a speeding car.')
                 alternative.attach(textplain)
                 msg.attach(alternative)
-                with open(kwargs[TEMP_FILE].path, 'rb') as fp:
-                    #jpgpart = MIMEApplication(fp.read())
+                with open(kwargs[IMAGE_NAME], 'rb') as fp:
                     jpgpart = email.mime.image.MIMEImage(fp.read())
                     jpgpart.add_header('Content-Disposition', 'attachment', filename=kwargs[IMAGE_NAME])
                     msg.attach(jpgpart)
-                    logger().info("successfully attached jpeg {} in Email".format(kwargs[TEMP_FILE].path))
+                    logger().info("successfully attached jpeg {} in Email".format(kwargs[IMAGE_NAME]))
 
 
             if LOG_FILE in kwargs:
@@ -61,7 +58,6 @@ class EmailSender:
             client = smtplib.SMTP('smtp.gmail.com', 587)
             client.starttls()
             #client = smtplib.SMTP_SSL('smtp.gmail.com', 465)
-            #client.ehlo()
             client.login(os.getenv(USERNAME), os.getenv(PASSWORD))
             if LOG_FILE in kwargs:
                 msg['Subject'] = 'The Car Speed Detector has broke on {}'.format(EmailSender.host_name)
@@ -71,10 +67,6 @@ class EmailSender:
                 client.sendmail(os.getenv(USERNAME), cls.main_recipient_list, msg.as_string())
             logger().debug("Email Sent")
             client.quit()
-            #os.remove(TEMP_FILE.path)
-            if TEMP_FILE in kwargs:
-                logger().info("Removing temp file name={}.".format(kwargs[TEMP_FILE].path))
-                os.system("rm -rf {}".format(kwargs[TEMP_FILE].path))
         except Exception as e:
                 logger().error("Caught an exception while sending an email {}....".format(
                     type(e).__name__ + ': ' + str(e)))
@@ -83,8 +75,8 @@ class EmailSender:
                 traceback.print_exc(file=sys.stdout)
                 print("-" * 60)
                 status = False
-        finally:
-            if TEMP_FILE in kwargs:
-                logger().info("Removing temp file name={}.".format(kwargs[TEMP_FILE].path))
-                os.system("rm -rf {}".format(kwargs[TEMP_FILE].path))
+        #finally:
+            #if TEMP_FILE in kwargs:
+            #    logger().info("Removing temp file name={}.".format(kwargs[TEMP_FILE].path))
+            #    os.system("rm -rf {}".format(kwargs[TEMP_FILE].path))
         return status

@@ -54,30 +54,27 @@ class SpeedValidator:
 
                 # initialize the image id, and the temporary file
                 imageID = datetime.now().strftime("%d-%b-%Y-%H-%M-%S-%f")
-                tempFile = TempFile()
                 curr_path = os.path.join(os.getcwd(), "speeding_car_images")
                 if not os.path.exists(curr_path):
                     os.makedirs(curr_path)
-                image_path = "{}/{}.png".format(curr_path, imageID)
+                image_path = "{}/{}.jpg".format(curr_path, imageID)
                 logger().info("Writing car image {} to hard drive.".format(image_path))
+                # write the date and speed on the image.
+                cv2.putText(frame, datetime.now().strftime("%A %d %B %Y %I:%M:%S%p"),
+                            (10, frame.shape[0] - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.75, (0, 255, 0), 1)
+                # write the speed: first get the size of the text
+                size, base = cv2.getTextSize("%.0f mph" % trackable_object.speedMPH, cv2.FONT_HERSHEY_SIMPLEX, 2, 3)
+                # then center it horizontally on the image
+                cntr_x = int((frame.shape[1] - size[0]) / 2)
+                cv2.putText(frame, "%.0f mph" % trackable_object.speedMPH,
+                           (cntr_x, int(frame.shape[0] * 0.2)), cv2.FONT_HERSHEY_SIMPLEX, 2.00, (0, 255, 0), 3)
                 cv2.imwrite(image_path, frame)
 
                 if SEND_EMAIL:
-                    # write the date and speed on the image.
-                    cv2.putText(frame, datetime.now().strftime("%A %d %B %Y %I:%M:%S%p"),
-                                (10, frame.shape[0] - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.75, (0, 255, 0), 1)
-                    # write the speed: first get the size of the text
-                    size, base = cv2.getTextSize("%.0f mph" % trackable_object.speedMPH, cv2.FONT_HERSHEY_SIMPLEX, 2, 3)
-                    # then center it horizontally on the image
-                    cntr_x = int((frame.shape[1] - size[0]) / 2)
-                    cv2.putText(frame, "%.0f mph" % trackable_object.speedMPH,
-                                (cntr_x, int(frame.shape[0] * 0.2)), cv2.FONT_HERSHEY_SIMPLEX, 2.00, (0, 255, 0), 3)
-                    cv2.imwrite(tempFile.path, frame)
-
                     # create a thread to send the image via email.
                     # and start it
                     t = Thread(target=EmailSender.send_email,
-                               kwargs=dict(temp_file=tempFile, image_path='{}.png'.format(imageID)))
+                               kwargs=dict(image_path=image_path))
                     t.start()
 
                 if SEND_WHATS_APP:

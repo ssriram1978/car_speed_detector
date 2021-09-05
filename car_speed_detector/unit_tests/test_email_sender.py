@@ -15,19 +15,10 @@ class TestEmailSender(unittest.TestCase):
 
     def test_email_sender_with_speeding_car(self):
         print("testing email sender...")
-        os.system("cp /home/pi/git/car_speed_detector/car_speed_detector/sample_data/car.jpeg2 /home/pi/git/car_speed_detector/car_speed_detector/sample_data/car.jpeg")
-        temp_file = TempFile()
-        temp_file.path = '/home/pi/git/car_speed_detector/car_speed_detector/sample_data/car.jpeg'
-        temp_file1 = TempFile()
-        temp_file1.path = '/home/pi/git/car_speed_detector/car_speed_detector/sample_data/car.jpeg2'
-        email_sent_status = EmailSender().send_email(temp_file=temp_file,
-                                                     image_name='car.jpeg')
+        email_sent_status = EmailSender().send_email(image_name='/home/pi/git/car_speed_detector/car_speed_detector/sample_data/car.jpeg')
         self.assertEqual(email_sent_status, True)
         print("Email sent unit test passed")
         
-        # TODO Arjun : Check if car.jpeg is actually deleted.
-        self.assertEqual(os.path.exists(temp_file.path), False)
-        print("file delete test passed")
         
     def test_email_sender_with_debug_log(self):
         print("testing email sender...")
