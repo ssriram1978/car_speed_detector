@@ -74,7 +74,7 @@ class SpeedValidator:
                     # create a thread to send the image via email.
                     # and start it
                     t = Thread(target=EmailSender.send_email,
-                               kwargs=dict(image_path=image_path))
+                               kwargs=dict(image_name=image_path))
                     t.start()
 
                 if SEND_WHATS_APP:

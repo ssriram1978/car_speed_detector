@@ -6,7 +6,6 @@ import os.path
 from car_speed_detector.email_sender import EmailSender
 from imutils.io import TempFile
 
-# TODO Arjun, Adi
 
 class TestEmailSender(unittest.TestCase):
     """

@@ -27,7 +27,7 @@ class EmailSender:
         """
         status = True
         try:
-            logger().info("Sending Email")
+            logger().info("Sending Email kwargs={}.".format(kwargs))
 
             msg = MIMEMultipart('mixed')
             msg['From'] = os.getenv(USERNAME)
@@ -65,7 +65,7 @@ class EmailSender:
             if LOG_FILE not in kwargs:
                 msg['Subject'] = 'From GVW speed detector camera {} - Speeding car in GVW'.format(EmailSender.host_name)
                 client.sendmail(os.getenv(USERNAME), cls.main_recipient_list, msg.as_string())
-            logger().debug("Email Sent")
+            logger().info("Email Sent")
             client.quit()
         except Exception as e:
                 logger().error("Caught an exception while sending an email {}....".format(

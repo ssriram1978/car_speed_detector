@@ -1,12 +1,13 @@
 from twilio.rest import Client
 import socket
-from car_speed_detector.constants import CAR_SPEED, SPEEDING_CAR_IMAGE
+from car_speed_detector.constants import CAR_SPEED, IMAGE_NAME
 import os
 import boto3
 import time
 import sys, traceback
 from dotenv import load_dotenv
 from car_speed_detector.car_speed_logging import logger
+import mimetypes
 
 load_dotenv(verbose=True)
 
@@ -60,11 +61,14 @@ class WhatsAppMessageSender(object):
         #                   from_=from_whatsapp_number,
         #                   to=to_whatsapp_number)
         logger().info("kwargs = {}".format(kwargs))
-        if SPEEDING_CAR_IMAGE not in kwargs or CAR_SPEED not in kwargs:
+        if IMAGE_NAME not in kwargs or CAR_SPEED not in kwargs:
             return
         logger().info(
-            f"Uploading the speeding car image url {kwargs[SPEEDING_CAR_IMAGE]} to {self.__host_name} s3 location.")
-        s3_url = self.__upload_file_to_bucket(kwargs[SPEEDING_CAR_IMAGE])
+            f"Uploading the speeding car image url {kwargs[IMAGE_NAME]} to {self.__host_name} s3 location.")
+        s3_url = self.__upload_file_to_bucket(kwargs[IMAGE_NAME])
+        if not s3_url:
+            logger().error("Unable to create a s3_url")
+            return
         logger().info("sending a whatsapp message to {}".format(s3_url))
         message = self.__client.messages.create(
             body='From GVW Car speed detector camera {}, speeding car in GVW - {} mph.'.format(self.__host_name,
@@ -78,14 +82,17 @@ class WhatsAppMessageSender(object):
 
     def __upload_file_to_bucket(self, file_path):
         if not os.path.exists(file_path):
+            logger().error(f"file path {file_path} does not exist.")
             return ""
+        file_mime_type, _ = mimetypes.guess_type(file_path)
+        logger().info(f"Mime type of the input file {file_path} is {file_mime_type}.")
         file_dir, file_name = os.path.split(file_path)
         if not self.__s3_bucket:
             return
         self.__s3_bucket.upload_file(
             Filename=file_path,
             Key=file_name,
-            ExtraArgs={'ACL': 'public-read'}
+            ExtraArgs={'ACL': 'public-read', 'ContentType': file_mime_type}
         )
         s3_url = f"https://{self.__host_name}.s3.amazonaws.com/{file_name}"
         time.sleep(2)

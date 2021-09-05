@@ -11,6 +11,10 @@ class TestWhatsappMessageSender(unittest.TestCase):
 
     def test_whatsapp_message_sender(self):
         WhatsAppMessageSender().send_whatsapp_message(speed=10,
-                                                      image_path=os.path.join(os.path.dirname(__file__),
-                                                                              '../sample_data/speeding_car.jpg'))
+                                                      image_name=os.path.join(os.path.dirname(os.path.realpath(__file__)),
+                                                                              '../sample_data/car_with_license_plate.jpg'))
 
+
+
+if __name__ == "__main__":
+    unittest.main()
