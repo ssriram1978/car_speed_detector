@@ -4,7 +4,8 @@ from pathlib import Path
 from threading import Thread
 
 import cv2
-from car_speed_detector.constants import SEND_WHATS_APP, SEND_EMAIL, MAX_THRESHOLD_SPEED, LOG_FILE_NAME, TEMP_FILE, \
+from car_speed_detector.constants import DISCARD_SPEED_VALUE, SEND_WHATS_APP, SEND_EMAIL, MAX_THRESHOLD_SPEED, \
+    LOG_FILE_NAME, TEMP_FILE, \
     IMAGE_NAME, LOG_FILE
 from car_speed_detector.email_sender import EmailSender
 from imutils.io import TempFile
@@ -58,7 +59,8 @@ class SpeedValidator:
                 if not os.path.exists(curr_path):
                     os.makedirs(curr_path)
                 image_path = "{}/{}.jpg".format(curr_path, imageID)
-                logger().info("Writing car image {} to hard drive.".format(image_path))
+                logger().info("For object_id {}, Writing car image {} to hard drive.".format(trackable_object.object_id,
+                                                                                             image_path))
                 # write the date and speed on the image.
                 cv2.putText(frame, datetime.now().strftime("%A %d %B %Y %I:%M:%S%p"),
                             (10, frame.shape[0] - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.75, (0, 255, 0), 1)

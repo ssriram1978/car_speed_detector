@@ -161,6 +161,14 @@ class SpeedDetector:
         """
         return SpeedTrackerHandler.get_direction_for_first_centroid_object()
 
+    def get_direction_for_a_centroid_id(self, centroid_id):
+        """
+        Used in unit testing.
+        Returns the computed direction for the requested centroid tracker from the dictionary.
+        :return:
+        """
+        return SpeedTrackerHandler.get_direction_for_this_centroid_object(centroid_id)
+
     def get_speed_dict(self):
         """
         Get the speed dict.
@@ -175,6 +183,14 @@ class SpeedDetector:
         :return:
         """
         return SpeedTrackerHandler.get_computed_speed_for_the_first_centroid_object()
+
+    def get_computed_speed_for_the_this_centroid_object(self, centroid_tracker_id):
+        """
+        Used in unit testing.
+        Returns the computed speed for the specified centroid_tracker_id.
+        :return:
+        """
+        return SpeedTrackerHandler.get_computed_speed_for_the_this_centroid_object(centroid_tracker_id)
 
     def loop_over_streams(self):
         while self.__perform_speed_detection:

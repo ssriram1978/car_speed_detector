@@ -5,7 +5,8 @@ from datetime import datetime
 import cv2
 import numpy as np
 from car_speed_detector.car_speed_logging import logger
-from car_speed_detector.constants import (MILES_PER_ONE_KILOMETER, TIMEOUT_FOR_TRACKER, MID_POINT_IN_THE_FRAME,
+from car_speed_detector.constants import (DISCARD_SPEED_VALUE,
+                                          MILES_PER_ONE_KILOMETER, TIMEOUT_FOR_TRACKER, MID_POINT_IN_THE_FRAME,
                                           Direction, MIN_COLUMN_MOVEMENT_TO_DETERMINE_DIRECTION)
 from car_speed_detector.speed_tracker import SpeedTracker
 from car_speed_detector.speed_validator import SpeedValidator
@@ -91,8 +92,15 @@ class SpeedTrackerHandler:
                 if not car_tracker_object.estimated:
                     # set the object as estimated
                     car_tracker_object.estimated = True
-                    logger().info(
-                        "Speed of the vehicle that just passed is: {:.2f} MPH".format(car_tracker_object.speedMPH))
+                    if car_tracker_object.speedMPH <= DISCARD_SPEED_VALUE:
+                        # set the object has logged
+                        car_tracker_object.logged = True
+                        #cls.__handle_the_case_where_grace_time_for_tracking_is_over(now, car_tracker_object)
+                        continue
+                    else:
+                        logger().info(
+                        "Speed of the vehicle {} that just passed is: {:.2f} MPH".format(car_tracker_object.object_id,
+                                                                                         car_tracker_object.speedMPH))
                 SpeedValidator.validate_speed(car_tracker_object)
                 if not keep_dict_items:
                     cls.__handle_the_case_where_grace_time_for_tracking_is_over(now, car_tracker_object)
@@ -106,12 +114,28 @@ class SpeedTrackerHandler:
         return repr(cls.speed_tracking_dict[0].direction)
 
     @classmethod
+    def get_direction_for_this_centroid_object(cls, object_id):
+        """
+        Used for unit testing purpose.
+        :return:
+        """
+        return repr(cls.speed_tracking_dict[object_id].direction)
+
+    @classmethod
     def get_computed_speed_for_the_first_centroid_object(cls):
         """
         Fetches speed computed for the first centroid object.
         :return:
         """
         return cls.speed_tracking_dict[0].speedMPH
+
+    @classmethod
+    def get_computed_speed_for_the_this_centroid_object(cls, centroid_object_id):
+        """
+        Fetches speed computed for the first centroid object.
+        :return:
+        """
+        return cls.speed_tracking_dict[centroid_object_id].speedMPH
 
     @classmethod
     def estimate_object_speed(cls, frame, trackable_object, meter_per_pixel):
