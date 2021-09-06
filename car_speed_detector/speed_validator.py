@@ -62,8 +62,12 @@ class SpeedValidator:
                 logger().info("For object_id {}, Writing car image {} to hard drive.".format(trackable_object.object_id,
                                                                                              image_path))
                 # write the date and speed on the image.
-                cv2.putText(frame, datetime.now().strftime("%A %d %B %Y %I:%M:%S%p"),
-                            (10, frame.shape[0] - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.75, (0, 255, 0), 1)
+                cv2.putText(frame, datetime.now().strftime("%m/%d/%Y, %H:%M:%S"),
+                            (10, frame.shape[0] - 10),
+                            cv2.FONT_HERSHEY_SIMPLEX,
+                            0.75,
+                            (0, 0, 255),
+                            1)
                 # write the speed: first get the size of the text
                 size, base = cv2.getTextSize("%.0f mph" % trackable_object.speedMPH, cv2.FONT_HERSHEY_SIMPLEX, 2, 3)
                 # then center it horizontally on the image

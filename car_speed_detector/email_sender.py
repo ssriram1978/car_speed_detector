@@ -37,11 +37,12 @@ class EmailSender:
                 textplain = MIMEText('Captured a picture of a speeding car.')
                 alternative.attach(textplain)
                 msg.attach(alternative)
+                image_name=kwargs[IMAGE_NAME].split('/')[-1]
                 with open(kwargs[IMAGE_NAME], 'rb') as fp:
                     jpgpart = email.mime.image.MIMEImage(fp.read())
-                    jpgpart.add_header('Content-Disposition', 'attachment', filename=kwargs[IMAGE_NAME])
+                    jpgpart.add_header('Content-Disposition', 'attachment', filename=image_name)
                     msg.attach(jpgpart)
-                    logger().info("successfully attached jpeg {} in Email".format(kwargs[IMAGE_NAME]))
+                    logger().info("successfully attached jpeg {} in Email".format(image_name))
 
 
             if LOG_FILE in kwargs:

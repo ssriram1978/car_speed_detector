@@ -14,14 +14,14 @@ class TestEmailSender(unittest.TestCase):
 
     def test_email_sender_with_speeding_car(self):
         print("testing email sender...")
-        email_sent_status = EmailSender().send_email(image_name='/home/pi/git/car_speed_detector/car_speed_detector/sample_data/car.jpeg')
+        email_sent_status = EmailSender().send_email(image_name=os.path.join(os.path.dirname(os.path.realpath(__file__)),
+                                                                              '../sample_data/car.jpg'))
         self.assertEqual(email_sent_status, True)
         print("Email sent unit test passed")
         
         
     def test_email_sender_with_debug_log(self):
         print("testing email sender...")
-        os.system("cp /home/pi/git/car_speed_detector/car_speed_detector/sample_data/car.jpeg2 /home/pi/git/car_speed_detector/car_speed_detector/sample_data/car.jpeg")
         os.system("touch car_logging.log")
         os.system("Email Sent >> car_logging.log")
         email_sent_status = EmailSender().send_email(log_file='car_logging.log')
