@@ -12,7 +12,7 @@ LOG_FILE_NAME = "speed_detector.csv"
 PROTO_TEXT_FILE = "MobileNetSSD_deploy.prototxt"
 
 # Max threshold for Speed in miles/hour
-MAX_THRESHOLD_SPEED = 10
+MAX_THRESHOLD_SPEED = 5
 
 # Discard value for speed.
 DISCARD_SPEED_VALUE = 5

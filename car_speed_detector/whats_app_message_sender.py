@@ -75,9 +75,11 @@ class WhatsAppMessageSender(object):
     def send_whatsapp_message_to_this_destination(self, curr_speed, s3_url, destination_number):
         logger().info("sending a whatsapp message to {}".format(s3_url))
         message = self.__client.messages.create(
-                body='From GVW Car speed detector camera located at {}, speeding car in GVW - {} mph url: {}.'.format(self.__host_name,
+                #body='From GVW Car speed detector camera located at {}, speeding car in GVW - {} mph url: {}.'.format(self.__host_name,
+                #                                                                                curr_speed, s3_url),
+                body='From Car speed detector camera located at {}, Speed: {} mph. Image link - {}'.format(self.__host_name,
                                                                                                 curr_speed, s3_url),
-            media_url=[s3_url],
+            #media_url=[s3_url],
             from_=self.__from_whatsapp_number,
             to=destination_number
         )

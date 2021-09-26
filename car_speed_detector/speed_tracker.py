@@ -53,6 +53,6 @@ class SpeedTracker:
         if len(self.speedMPH_list) < MAX_NUM_OF_CONSECUTIVE_FRAMES_FOR_ACTION:
             return
         sorted_mph_list = [ x for x in sorted(self.speedMPH_list) if x > DISCARD_SPEED_VALUE]
-        logger().info("self.object_id = {}, sorted_mph_list = {}".format(self.object_id, sorted_mph_list))
-        if len(sorted_mph_list):
+        if len(sorted_mph_list) >= MAX_NUM_OF_CONSECUTIVE_FRAMES_FOR_ACTION:
+            logger().info("self.object_id = {}, sorted_mph_list = {}".format(self.object_id, sorted_mph_list))
             self.speedMPH = np.percentile(sorted_mph_list, 50)
