@@ -277,6 +277,7 @@ class SpeedDetector:
                 traceback.print_exc(file=sys.stdout)
                 print("-" * 60)
                 return_value = False
+                break
                 #os.system("sudo reboot")
         return return_value
 
